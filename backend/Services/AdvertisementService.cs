@@ -52,6 +52,13 @@ namespace backend.Services
             context.Advertisements.Add(advertisement);
             await context.SaveChangesAsync();
 
+            // Подгружаем AdvertisementCategories вместе с Category
+            await context.Entry(advertisement)
+                .Collection(a => a.AdvertisementCategories)
+                .Query()
+                .Include(ac => ac.Category)
+                .LoadAsync();
+
             return MapToDto(advertisement);
         }
 
@@ -154,6 +161,7 @@ namespace backend.Services
         // Приватный метод для маппинга в DTO
         private AdvertisementDto MapToDto(Advertisement ad)
         {
+            //Categories = ad.AdvertisementCategories.Select(c => c.Category.Name).ToList()
             return new AdvertisementDto
             {
                 Id = ad.Id,
@@ -165,8 +173,11 @@ namespace backend.Services
                 ContactPhoneNumber = ad.ContactPhoneNumber,
                 Status = ad.Status,
                 CreatedAt = ad.CreatedAt,
-                Images = ad.AdvertisementImages.Select(i => i.Url).ToList(),
-                Categories = ad.AdvertisementCategories.Select(c => c.Category.Name).ToList()
+                Images = ad.AdvertisementImages?.Select(i => i.Url).ToList() ?? new List<string>(),
+                Categories = ad.AdvertisementCategories?
+                    .Where(ac => ac.Category != null)
+                    .Select(ac => ac.Category!.Name)
+                    .ToList() ?? new List<string>(),
             };
         }
     }
