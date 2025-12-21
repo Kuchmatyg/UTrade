@@ -27,6 +27,7 @@
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
         public AdvertisementStatus Status { get; set; } = AdvertisementStatus.Pending;
+        public string? RejectionReason { get; set; }
 
         //public string Status { get; set; } = null!;
 
