@@ -76,6 +76,68 @@ namespace backend.Services
             return advertisementsDto;
         }
 
+        // Обновление объявления владельцем
+        public async Task UpdateAdvertisementAsync(int adId, UpdateAdvertisementDto dto, int currentUserId)
+        {
+            var ad = await context.Advertisements
+                .Include(a => a.AdvertisementCategories)
+                .FirstOrDefaultAsync(a => a.Id == adId && !a.IsDeleted);
+
+            if (ad == null)
+                throw new Exception("Advertisement not found");
+
+            if (ad.OwnerId != currentUserId)
+                throw new Exception("You are not the owner");
+
+            // обновляем поля
+            ad.Name = dto.Name;
+            ad.Description = dto.Description;
+            ad.Price = dto.Price;
+            ad.Location = dto.Location;
+            ad.ContactEmail = dto.ContactEmail;
+            ad.ContactPhoneNumber = dto.ContactPhoneNumber;
+            ad.UpdatedAt = DateTime.UtcNow;
+
+            // обновляем категории
+            ad.AdvertisementCategories.Clear();
+
+            if (dto.CategoryIds != null)
+            {
+                foreach (var categoryId in dto.CategoryIds)
+                {
+                    ad.AdvertisementCategories.Add(new AdvertisementCategory
+                    {
+                        AdvertisementId = ad.Id,
+                        CategoryId = categoryId,
+                        CreatedAt = DateTime.UtcNow
+                    });
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        // Повторная отправка на модерацию
+        public async Task ResubmitAdvertisementAsync(int adId, int currentUserId)
+        {
+            var ad = await context.Advertisements.FirstOrDefaultAsync(a => a.Id == adId);
+
+            if (ad == null)
+                throw new Exception("Advertisement not found");
+
+            if (ad.OwnerId != currentUserId)
+                throw new Exception("You are not the owner");
+
+            if (ad.Status != AdvertisementStatus.Rejected)
+                throw new Exception("Only rejected advertisements can be resubmitted");
+
+            ad.Status = AdvertisementStatus.Pending;
+            ad.RejectionReason = null;
+            ad.UpdatedAt = DateTime.UtcNow;
+
+            await context.SaveChangesAsync();
+        }
+
         // Получение всех Pending объявлений для модератора
         public async Task<List<AdvertisementDto>> GetPendingAdvertisementsAsync()
         {
@@ -101,12 +163,25 @@ namespace backend.Services
         }
 
         // Отклонение объявления Модератором
-        public async Task RejectAdvertisementAsync(int adId)
-        {
-            var advertisement = await context.Advertisements.FindAsync(adId);
-            if (advertisement == null) throw new Exception("Advertisement not found");
+        //public async Task RejectAdvertisementAsync(int adId)
+        //{
+        //    var advertisement = await context.Advertisements.FindAsync(adId);
+        //    if (advertisement == null) throw new Exception("Advertisement not found");
 
-            advertisement.Status = AdvertisementStatus.Rejected;
+        //    advertisement.Status = AdvertisementStatus.Rejected;
+        //    await context.SaveChangesAsync();
+        //}
+        // Отклонение модератором с причиной
+        public async Task RejectAdvertisementAsync(int adId, string reason)
+        {
+            var ad = await context.Advertisements.FindAsync(adId);
+            if (ad == null)
+                throw new Exception("Advertisement not found");
+
+            ad.Status = AdvertisementStatus.Rejected;
+            ad.RejectionReason = reason;
+            ad.UpdatedAt = DateTime.UtcNow;
+
             await context.SaveChangesAsync();
         }
 

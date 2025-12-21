@@ -61,6 +61,25 @@ namespace backend.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateAdvertisement(int id, [FromBody] UpdateAdvertisementDto dto)
+        {
+            int userId = int.Parse(User.FindFirst("id")!.Value);
+            await service.UpdateAdvertisementAsync(id, dto, userId);
+            return Ok();
+        }
+
+        [HttpPost("{id}/resubmit")]
+        [Authorize]
+        public async Task<IActionResult> ResubmitAdvertisement(int id)
+        {
+            int userId = int.Parse(User.FindFirst("id")!.Value);
+            await service.ResubmitAdvertisementAsync(id, userId);
+            return Ok();
+        }
+
+
         // -------------------- Moderator Endpoints --------------------
 
         // Получение всех Pending объявлений для модератора
@@ -84,9 +103,9 @@ namespace backend.Controllers
         // Отклонение объявления Модератором
         [HttpPost("{adId}/reject")]
         [Authorize(Roles = "Moderator")]
-        public async Task<IActionResult> RejectAdvertisement(int adId)
+        public async Task<IActionResult> RejectAdvertisement(int adId, [FromBody] RejectAdvertisementDto dto)
         {
-            await service.RejectAdvertisementAsync(adId);
+            await service.RejectAdvertisementAsync(adId, dto.Reason);
             return Ok();
         }
     }
