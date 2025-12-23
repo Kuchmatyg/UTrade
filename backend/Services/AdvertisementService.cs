@@ -9,11 +9,13 @@ namespace backend.Services
     {
         private readonly ApplicationDbContext context;
         private readonly IWebHostEnvironment env;
+        private readonly NotificationService notificationService;
 
-        public AdvertisementService(ApplicationDbContext context, IWebHostEnvironment env)
+        public AdvertisementService(ApplicationDbContext context, IWebHostEnvironment env, NotificationService notificationService)
         {
             this.context = context;
             this.env = env;
+            this.notificationService = notificationService;
         }
 
         // Создание нового объявления
@@ -58,6 +60,15 @@ namespace backend.Services
                 .Query()
                 .Include(ac => ac.Category)
                 .LoadAsync();
+
+            // Подгружаем Owner, чтобы MapToDto не упал
+            await context.Entry(advertisement)
+                .Reference(a => a.Owner)
+                .LoadAsync();
+
+            // Создаём уведомление пользователю
+            string message = $"Ваше объявление \"{advertisement.Name}\" отправлено на модерацию";
+            await notificationService.NotifyAsync(ownerId, message);
 
             return MapToDto(advertisement);
         }
@@ -136,6 +147,10 @@ namespace backend.Services
             ad.RejectionReason = null;
             ad.UpdatedAt = DateTime.UtcNow;
 
+            // Создаём уведомление пользователю
+            string message = $"Ваше объявление \"{ad.Name}\" повторно отправлено на модерацию";
+            await notificationService.NotifyAsync(ad.OwnerId, message);
+
             await context.SaveChangesAsync();
         }
 
@@ -143,6 +158,7 @@ namespace backend.Services
         public async Task<List<AdvertisementDto>> GetPendingAdvertisementsAsync()
         {
             var advertisements = await context.Advertisements
+                .Include(a => a.Owner)
                 .Include(a => a.AdvertisementImages)
                 .Include(a => a.AdvertisementCategories)
                 .ThenInclude(ac => ac.Category)
@@ -160,6 +176,11 @@ namespace backend.Services
             if (advertisement == null) throw new Exception("Advertisement not found");
 
             advertisement.Status = AdvertisementStatus.Approved;
+
+            // Создаём уведомление пользователю
+            string message = $"Ваше объявление \"{advertisement.Name}\" опубликовано";
+            await notificationService.NotifyAsync(advertisement.OwnerId, message);
+           
             await context.SaveChangesAsync();
         }
 
@@ -182,6 +203,10 @@ namespace backend.Services
             ad.Status = AdvertisementStatus.Rejected;
             ad.RejectionReason = reason;
             ad.UpdatedAt = DateTime.UtcNow;
+
+            // Создаём уведомление пользователю
+            string message = $"Ваше объявление \"{ad.Name}\" отклонено. Причина: {reason}";
+            await notificationService.NotifyAsync(ad.OwnerId, message);
 
             await context.SaveChangesAsync();
         }
