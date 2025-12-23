@@ -43,8 +43,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Сервисы
-builder.Services.AddScoped<AdvertisementService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<AdvertisementService>();
+builder.Services.AddScoped<ChatService>();
 
 // JWT Аутентификация 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
