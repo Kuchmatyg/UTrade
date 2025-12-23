@@ -2,16 +2,19 @@
 using backend.DTO;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace backend.Services
 {
     public class ChatService
     {
         private readonly ApplicationDbContext context;
+        private readonly NotificationService notificationService;
 
-        public ChatService(ApplicationDbContext context)
+        public ChatService(ApplicationDbContext context, NotificationService notificationService)
         {
             this.context = context;
+            this.notificationService = notificationService;
         }
 
         // Получить список чатов пользователя
@@ -75,6 +78,28 @@ namespace backend.Services
                 c.UserFromId == fromUserId &&
                 c.UserToId == ad.OwnerId);
 
+            if (ad.OwnerId == fromUserId)
+                throw new Exception("The listing owner cannot start a chat.");
+
+            // Нужно вытащить определённые данные для, такие как UserFromName и UserToName,
+            // всё это необходимо для проекции на UI
+            var userFromInfo = await context.Users
+                .Where(u => u.Id == fromUserId)
+                .Select(u => new {
+                    u.Username
+                })
+                .FirstOrDefaultAsync();
+
+            var userToInfo = await context.Users
+                .Where(u => u.Id == ad.OwnerId)
+                .Select(u => new {
+                    u.Username
+                })
+                .FirstOrDefaultAsync();
+
+            if (userFromInfo == null)
+                throw new Exception("Not found user");
+
             if (existingChat != null)
             {
                 ChatDto oldChat = new ChatDto
@@ -82,7 +107,9 @@ namespace backend.Services
                     Id = existingChat.Id,
                     AdvertisementId = existingChat.AdvertisementId,
                     UserFromId = existingChat.UserFromId,
+                    UserFromName = userFromInfo.Username,
                     UserToId = existingChat.UserToId,
+                    UserToName = userToInfo!.Username,
                     CreatedAt = existingChat.CreatedAt
                 };
                 return oldChat;
@@ -105,7 +132,9 @@ namespace backend.Services
                 Id = chat.Id,
                 AdvertisementId = chat.AdvertisementId,
                 UserFromId = chat.UserFromId,
+                UserFromName = userFromInfo.Username,
                 UserToId = chat.UserToId,
+                UserToName = userToInfo!.Username,
                 CreatedAt = chat.CreatedAt
             };
 
@@ -144,13 +173,15 @@ namespace backend.Services
 
             // Создаём уведомление для второго участника
             var receiverId = chatInfo.UserFromId == senderId ? chatInfo.UserToId : chatInfo.UserFromId;
-            var notification = new Notification
-            {
-                UserId = receiverId,
-                Content = $"Новое сообщение в чате по объявлению '{chatInfo.AdvertisementName}'",
-                CreatedAt = DateTime.UtcNow
-            };
-            context.Notifications.Add(notification);
+            string notifyMessage = $"Новое сообщение в чате по объявлению '{chatInfo.AdvertisementName}'";
+            await notificationService.NotifyAsync(receiverId, notifyMessage);
+            //var notification = new Notification
+            //{
+            //    UserId = receiverId,
+            //    Content = $"Новое сообщение в чате по объявлению '{chatInfo.AdvertisementName}'",
+            //    CreatedAt = DateTime.UtcNow
+            //};
+            //context.Notifications.Add(notification);
 
             await context.SaveChangesAsync();
 
