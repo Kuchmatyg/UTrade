@@ -66,6 +66,7 @@ namespace backend.Services
         public async Task<List<AdvertisementDto>> GetApprovedAdvertisementsAsync()
         {
             var advertisements = await context.Advertisements
+                .Include(a => a.Owner)
                 .Include(a => a.AdvertisementImages)
                 .Include(a => a.AdvertisementCategories)
                 .ThenInclude(ac => ac.Category)
@@ -243,6 +244,7 @@ namespace backend.Services
                 Name = ad.Name,
                 Description = ad.Description,
                 Price = ad.Price,
+                Username = ad.Owner.Username,
                 Location = ad.Location,
                 ContactEmail = ad.ContactEmail,
                 ContactPhoneNumber = ad.ContactPhoneNumber,
