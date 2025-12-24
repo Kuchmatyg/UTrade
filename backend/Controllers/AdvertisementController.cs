@@ -3,6 +3,7 @@ using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -61,22 +62,31 @@ namespace backend.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{adId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateAdvertisement(int id, [FromBody] UpdateAdvertisementDto dto)
+        public async Task<IActionResult> UpdateAdvertisement(int adId, [FromBody] UpdateAdvertisementDto dto)
         {
             int userId = int.Parse(User.FindFirst("id")!.Value);
-            await service.UpdateAdvertisementAsync(id, dto, userId);
+            await service.UpdateAdvertisementAsync(adId, dto, userId);
             return Ok();
         }
 
-        [HttpPost("{id}/resubmit")]
+        [HttpPost("{adId}/resubmit")]
         [Authorize]
-        public async Task<IActionResult> ResubmitAdvertisement(int id)
+        public async Task<IActionResult> ResubmitAdvertisement(int adId)
         {
             int userId = int.Parse(User.FindFirst("id")!.Value);
-            await service.ResubmitAdvertisementAsync(id, userId);
+            await service.ResubmitAdvertisementAsync(adId, userId);
             return Ok();
+        }
+
+        [HttpPost("{adId}/complete")]
+        [Authorize]
+        public async Task<IActionResult> Complete(int adId)
+        {
+            int currentUserId = int.Parse(User.FindFirst("id")!.Value);
+            await service.CompleteAdvertisementAsync(adId, currentUserId);
+            return NoContent();
         }
 
 
