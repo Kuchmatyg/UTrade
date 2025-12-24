@@ -15,6 +15,10 @@ namespace backend.Migrations
                 table: "AdvertisementImages",
                 newName: "FileName");
 
+            migrationBuilder.DropColumn(
+                name: "Status",
+                table: "Advertisements");
+
             // Создаём новый столбец Status как integer
             migrationBuilder.AddColumn<int>(
                 name: "Status",
@@ -32,9 +36,6 @@ namespace backend.Migrations
                table: "AdvertisementImages",
                newName: "Image");
 
-            migrationBuilder.DropColumn(
-                name: "Status",
-                table: "Advertisements");
         }
     }
 }
