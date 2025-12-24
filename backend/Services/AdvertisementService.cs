@@ -129,6 +129,27 @@ namespace backend.Services
             await context.SaveChangesAsync();
         }
 
+        // Завершение объявления и установка статуса Completed
+        public async Task CompleteAdvertisementAsync(int adId, int currentUserId)
+        {
+            var ad = await context.Advertisements
+                .FirstOrDefaultAsync(a => a.Id == adId && !a.IsDeleted);
+
+            if (ad == null)
+                throw new Exception("Advertisement not found");
+
+            if (ad.OwnerId != currentUserId)
+                throw new Exception("You are not the owner");
+
+            if (ad.Status != AdvertisementStatus.Approved)
+                throw new Exception("Only approved advertisements can be completed");
+
+            ad.Status = AdvertisementStatus.Completed;
+            ad.UpdatedAt = DateTime.UtcNow;
+
+            await context.SaveChangesAsync();
+        }
+
         // Повторная отправка на модерацию
         public async Task ResubmitAdvertisementAsync(int adId, int currentUserId)
         {

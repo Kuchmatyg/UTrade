@@ -5,7 +5,8 @@
     {
         Pending,    // ожидает модерации
         Approved,   // опубликовано
-        Rejected    // отклонено
+        Rejected,   // отклонено
+        Completed   // сделка завершена
     }
 
     public class Advertisement

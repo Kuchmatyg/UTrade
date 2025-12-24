@@ -137,6 +137,7 @@ namespace backend.AppDbContext
 
                 entity.HasIndex(r => r.AuthorId);
                 entity.HasIndex(r => r.TargetUserId);
+                entity.HasIndex(r => new { r.AuthorId, r.AdvertisementId });
 
                 entity.Property(r => r.CreatedAt)
                     .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
