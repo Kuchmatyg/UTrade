@@ -19,7 +19,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Введите: Bearer {ваш JWT}"
+        Description = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: Bearer {пїЅпїЅпїЅ JWT}"
     });
 
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -38,18 +38,30 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 // AppDbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Сервисы
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<AdvertisementService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ReviewService>();
 
-// JWT Аутентификация 
+// JWT пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
@@ -85,6 +97,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
