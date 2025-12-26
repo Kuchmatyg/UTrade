@@ -1,4 +1,5 @@
 using backend.AppDbContext;
+using backend.Hubs;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -41,12 +42,13 @@ builder.Services.AddSwaggerGen(c =>
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
         policy
-            .AllowAnyOrigin()
+            .WithOrigins("http://localhost:5173") // VITE
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -60,6 +62,7 @@ builder.Services.AddScoped<AdvertisementService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ReviewService>();
+builder.Services.AddSignalR();
 
 // JWT �������������� 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -98,11 +101,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Serve static files from wwwroot (uploads etc.)
+app.UseStaticFiles();
+
 app.MapControllers();
+
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

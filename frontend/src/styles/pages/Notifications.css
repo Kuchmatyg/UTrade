@@ -1,0 +1,4 @@
+/* Notifications page */
+.notifications { max-width:760px; margin:1rem auto; }
+.notifications-list li { display:flex; justify-content:space-between; align-items:center; }
+.notifications-list button { margin-left:8px; }

@@ -10,6 +10,10 @@ import AdsList from './pages/Ads/AdsList'
 import AdDetails from './pages/Ads/AdDetails'
 import Profile from './pages/Profile'
 import Notifications from './pages/Notifications'
+import ChatsList from './pages/Chats/ChatsList'
+import Chat from './pages/Chats/Chat'
+import CreateAd from './pages/MyAds/CreateAd'
+import ModeratorAds from './pages/Moderator/ModeratorAds'
 
 function App() {
   return (
@@ -20,6 +24,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<AdsList />} />
             <Route path="/ads/:id" element={<AdDetails />} />
+            <Route path="/chats" element={<ProtectedRoute><ChatsList /></ProtectedRoute>} />
+            <Route path="/chats/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+            <Route path="/myads/create" element={<ProtectedRoute><CreateAd /></ProtectedRoute>} />
+            <Route path="/moderator/ads" element={<ProtectedRoute><ModeratorAds /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
           </Routes>

@@ -1,0 +1,3 @@
+/* Ads list page */
+.ads-list-header { display:flex; justify-content:space-between; align-items:center; }
+.ads-grid { margin-top:1rem; }

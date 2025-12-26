@@ -1,0 +1,4 @@
+/* CreateAd page styles */
+.create-ad { max-width: 720px; margin: 1.25rem auto; }
+.create-ad .form { display:flex; flex-direction:column; gap:0.75rem; }
+.create-ad input[type="file"] { padding: 0.25rem; }
