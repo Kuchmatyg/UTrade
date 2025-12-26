@@ -1,0 +1,4 @@
+/* Ad details page */
+.ad-details { max-width:900px; margin:1rem auto; display:flex; flex-direction:column; gap:0.5rem; }
+.ad-details .images { display:flex; gap:8px; margin-top:8px; }
+.ad-details .meta { color:#bbb; }

@@ -38,6 +38,14 @@ namespace backend.Controllers
             return Ok(advertisements);
         }
 
+        // Получение объявления по id
+        [HttpGet("{adId}")]
+        public async Task<IActionResult> GetAdvertisement(int adId)
+        {
+            var advertisement = await service.GetAdvertisementByIdAsync(adId);
+            return Ok(advertisement);
+        }
+
         // Загрузка изображения для объявления
         [HttpPost("{adId}/images")]
         [Authorize]

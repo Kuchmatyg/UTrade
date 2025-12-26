@@ -2,9 +2,9 @@ import React from 'react';
 import Header from './Header';
 
 const Layout = ({ children }) => (
-  <div>
+  <div className="layout-root">
     <Header />
-    <main>{children}</main>
+    <main className="layout-main">{children}</main>
   </div>
 );
 

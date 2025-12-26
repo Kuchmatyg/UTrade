@@ -35,20 +35,27 @@ namespace backend.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            // Связь с категориями
-            if (dto.CategoryIds != null)
+            // Связь с категориями: добавляем только существующие категории,
+            // чтобы не нарушать ограничение внешнего ключа
+            if (dto.CategoryIds != null && dto.CategoryIds.Count > 0)
             {
-                foreach (var categoryId in dto.CategoryIds)
+                var existingCategoryIds = await context.Categories
+                    .Where(c => dto.CategoryIds.Contains(c.Id))
+                    .Select(c => c.Id)
+                    .ToListAsync();
+
+                foreach (var categoryId in existingCategoryIds)
                 {
-                    advertisement.AdvertisementCategories.Add(
-                        new AdvertisementCategory()
-                        {
-                            Advertisement = advertisement,
-                            CategoryId = categoryId,
-                            CreatedAt = DateTime.UtcNow
-                        });
+                    advertisement.AdvertisementCategories.Add(new AdvertisementCategory
+                    {
+                        Advertisement = advertisement,
+                        CategoryId = categoryId,
+                        CreatedAt = DateTime.UtcNow
+                    });
                 }
 
+                // При желании можно оповестить клиента о несуществующих id,
+                // но для простоты просто игнорируем их здесь.
             }
 
             context.Advertisements.Add(advertisement);
@@ -188,6 +195,22 @@ namespace backend.Services
 
             var advertisementsDto = advertisements.Select(MapToDto).ToList();
             return advertisementsDto;
+        }
+
+        // Получение объявления по id
+        public async Task<AdvertisementDto> GetAdvertisementByIdAsync(int adId)
+        {
+            var ad = await context.Advertisements
+                .Include(a => a.Owner)
+                .Include(a => a.AdvertisementImages)
+                .Include(a => a.AdvertisementCategories)
+                .ThenInclude(ac => ac.Category)
+                .FirstOrDefaultAsync(a => a.Id == adId && !a.IsDeleted);
+
+            if (ad == null)
+                throw new Exception("Advertisement not found");
+
+            return MapToDto(ad);
         }
 
         // Одобрение объявления Модератором

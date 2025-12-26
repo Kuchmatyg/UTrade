@@ -1,12 +1,68 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { logout as logoutApi } from '../../api/auth.api';
+import { AuthContext } from '../../auth/AuthContext';
 
-const Header = () => (
-  <header>
-    <nav>
-      <Link to="/">Home</Link> | <Link to="/profile">Profile</Link> | <Link to="/notifications">Notifications</Link>
-    </nav>
-  </header>
-);
+const Header = () => {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const onDoc = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('click', onDoc);
+    return () => document.removeEventListener('click', onDoc);
+  }, []);
+
+  const { logoutFunc, user } = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    const ok = window.confirm('Are you sure you want to logout?');
+    if (!ok) return;
+    try { await logoutApi(); } catch {};
+    try { localStorage.removeItem('token'); } catch {}
+    try { logoutFunc(); } catch {}
+    navigate('/login');
+  };
+
+  return (
+    <header className="layout-header">
+      <nav>
+        <div className="nav-left">
+          <Link to="/" className="nav-logo">
+            <img src="/logo192.png" alt="Home" height={36} />
+          </Link>
+        </div>
+
+          <div className="nav-right">
+          <Link to="/chats">Chats</Link>
+          <Link to="/notifications">Notifications</Link>
+          {user && (user.role === 'Moderator' || user.role === 'Admin') && (
+            <Link to="/moderator/ads">Moderator</Link>
+          )}
+
+          <div className="profile-dropdown" ref={ref}>
+            <button className="profile-toggle" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+              <svg className="user-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M12 12c2.7614 0 5-2.2386 5-5s-2.2386-5-5-5-5 2.2386-5 5 2.2386 5 5 5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M3 21c0-3.866 3.582-7 9-7s9 3.134 9 7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className={`chev ${open ? 'open' : ''}`}>▾</span>
+            </button>
+            {open && (
+              <div className="dropdown-menu">
+                <Link to="/profile" onClick={() => setOpen(false)}>View profile</Link>
+                <Link to="/myads/create" onClick={() => setOpen(false)}>Create ad</Link>
+                <button onClick={handleLogout}>Logout</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
+};
 
 export default Header;
