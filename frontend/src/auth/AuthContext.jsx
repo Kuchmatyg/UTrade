@@ -30,9 +30,10 @@ export const AuthProvider = ({ children }) => {
 
   const loginFunc = (u) => setUser(u);
   const logoutFunc = () => setUser(null);
+  const updateUser = (u) => setUser(u);
 
   return (
-    <AuthContext.Provider value={{ user, loginFunc, logoutFunc, loading }}>
+    <AuthContext.Provider value={{ user, loginFunc, logoutFunc, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

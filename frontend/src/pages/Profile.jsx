@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../auth/AuthContext';
 import { fetchMyAdvertisements } from '../api/ads.api';
+import { updateProfile } from '../api/user.api';
 
 
 const STATUSES = [
@@ -13,27 +14,58 @@ const STATUSES = [
 
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, updateUser, loading: authLoading } = useContext(AuthContext);
   const [status, setStatus] = useState(null);
   const [ads, setAds] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [edit, setEdit] = useState(false);
+  const [form, setForm] = useState({
+    email: '',
+    phone: '',
+    location: '',
+  });
+  const [adsLoading, setAdsLoading] = useState(false);
 
   useEffect(() => {
     if (!user) return;
 
     const loadAds = async () => {
-      setLoading(true);
+      setAdsLoading(true);
       try {
         const data = await fetchMyAdvertisements(status);
         setAds(data);
       } finally {
-        setLoading(false);
+        setAdsLoading(false);
       }
     };
 
     loadAds();
   }, [status, user]);
 
+  useEffect(() => {
+    if (!user) return;
+  
+    setForm({
+      email: user.email || '',
+      phone: user.phone || '',
+      location: user.location || '',
+    });
+  }, [user]);
+
+  const handleSave = async () => {
+    try {
+      console.log(form.email);
+      console.log(form.phone);
+      console.log(form.location);
+      await updateProfile(form);
+      updateUser({ ...user, ...form });
+      setEdit(false);
+    } catch (e) {
+      alert('Failed to update profile');
+      console.error(e);
+    }
+  };
+
+  if (authLoading) return <div>Loading profile...</div>;
   if (!user) return <div>No user</div>;
 
   return (
@@ -41,8 +73,41 @@ const Profile = () => {
       <h2>Profile</h2>
 
       <p><strong>Username:</strong> {user.username}</p>
-      <p><strong>Email:</strong> {user.email}</p>
+      {/* <p><strong>Email:</strong> {user.email}</p> */}
       <p><strong>Role:</strong> {user.role}</p>
+
+      {!edit ? (
+        <>
+          <p><strong>Email:</strong> {user.email}</p>
+          <p><strong>Phone:</strong> {user.phone || '-'}</p>
+          <p><strong>Location:</strong> {user.location || '-'}</p>
+
+          <button onClick={() => setEdit(true)}>Edit profile</button>
+        </>
+      ) : (
+        <>
+          <input
+            value={form.email}
+            onChange={e => setForm({ ...form, email: e.target.value })}
+            placeholder="Email"
+          />
+
+          <input
+            value={form.phone}
+            onChange={e => setForm({ ...form, phone: e.target.value })}
+            placeholder="Phone number"
+          />
+
+          <input
+            value={form.location}
+            onChange={e => setForm({ ...form, location: e.target.value })}
+            placeholder="Location"
+          />
+
+          <button onClick={handleSave}>Save</button>
+          <button onClick={() => setEdit(false)}>Cancel</button>
+        </>
+      )}
 
       <hr />
 
@@ -63,9 +128,9 @@ const Profile = () => {
         ))}
       </div>
 
-      {loading && <div>Loading...</div>}
+      {adsLoading && <div>Loading...</div>}
 
-      {!loading && ads.length === 0 && (
+      {!adsLoading && ads.length === 0 && (
         <div>Объявлений нет</div>
       )}
 
