@@ -15,6 +15,7 @@
         public string Location { get; set; } = null!;
         public string Institute { get; set; } = null!;
         public UserRating? Rating { get; set; } // один рейтинг
+        public string? AvatarUrl { get; set; }
 
         // Кафедра
         public string? Department {  get; set; }

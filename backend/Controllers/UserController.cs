@@ -24,5 +24,26 @@ namespace backend.Controllers
             await service.UpdateProfileAsync(userId, dto);
             return NoContent();
         }
+
+        [HttpPost("profile/avatar")]
+        [Authorize]
+        public async Task<IActionResult> UploadAvatar(IFormFile file)
+        {
+            try
+            {
+                int userId = int.Parse(User.FindFirst("id")!.Value);
+                var avatarUrl = await service.SaveAvatarAsync(userId, file);
+                return Ok(new { avatarUrl });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }
