@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../auth/AuthContext';
 import { fetchMyAdvertisements } from '../api/ads.api';
 import { updateProfile } from '../api/user.api';
-
+import AdCard from "../components/Ads/AdCard";
 
 const STATUSES = [
   { value: null, label: 'Все' },
@@ -134,13 +134,8 @@ const Profile = () => {
         <div>Объявлений нет</div>
       )}
 
-      {ads.map(ad => (
-        <div key={ad.id} style={{ border: '1px solid #ddd', padding: 8, marginBottom: 8 }}>
-          <div><strong>{ad.name}</strong></div>
-          <div>Цена: {ad.price}</div>
-          <div>Статус: {ad.status}</div>
-          <div>Создано: {new Date(ad.createdAt).toLocaleDateString()}</div>
-        </div>
+      {ads.map( (ad) => (
+        <AdCard key={ad.id} ad={ad} />
       ))}
     </div>
   );
