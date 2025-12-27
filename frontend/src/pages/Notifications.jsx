@@ -35,16 +35,30 @@ const Notifications = () => {
   return (
     <div>
       <h2>Notifications</h2>
-      <ul>
-        {notes.map(n => (
-          <li key={n.id} style={{ marginBottom: 8 }}>
-            <div>{n.message}</div>
-            <div style={{ fontSize: 12, color: '#494545ff' }}>{n.Content}</div>
-            {!n.isRead && <button onClick={() => handleRead(n.id)}> User read</button>}
-            <button onClick={() => handleDelete(n.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <ul className="notifications">
+  {notes.map(n => (
+    <li
+      key={n.id}
+      className={`notification ${n.isRead ? 'read' : 'unread'}`}
+    >
+      <div className="dot" />
+
+      <div className="body">
+        <div className="content">{n.content}</div>
+        <div className="date">
+          {new Date(n.createdAt).toLocaleString()}
+        </div>
+      </div>
+
+      <div className="actions">
+        {!n.isRead && (
+          <button onClick={() => handleRead(n.id)}>✓</button>
+        )}
+        <button onClick={() => handleDelete(n.id)}>🗑</button>
+      </div>
+    </li>
+  ))}
+</ul>
     </div>
   );
 };
