@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../auth/AuthContext';
 import { fetchMyAdvertisements } from '../api/ads.api';
-import { updateProfile } from '../api/user.api';
+import { updateProfile, uploadAvatar } from '../api/user.api';
 import AdCard from "../components/Ads/AdCard";
+import Avatar from '../components/avatar/Avatar';
 
 const STATUSES = [
   { value: null, label: 'Все' },
@@ -24,6 +25,7 @@ const Profile = () => {
     location: '',
   });
   const [adsLoading, setAdsLoading] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -51,7 +53,7 @@ const Profile = () => {
     });
   }, [user]);
 
-  const handleSave = async () => {
+  const handleSaveProfile = async () => {
     try {
       console.log(form.email);
       console.log(form.phone);
@@ -65,12 +67,40 @@ const Profile = () => {
     }
   };
 
+  const handleAvatarChange = async (e) => {
+    if(!e.target.files || e.target.files.length === 0) return;
+
+    const file = e.target.files[0];
+    setAvatarUploading(true);
+    try {
+      const data = await uploadAvatar(file);
+      updateUser({ ...user, avatarUrl: data.avatarUrl });
+    } catch (e) {
+      alert("Failed to upload avatar");
+      console.error(e);
+    } finally {
+      setAvatarUploading(false);
+    }
+  }
+
   if (authLoading) return <div>Loading profile...</div>;
   if (!user) return <div>No user</div>;
 
   return (
     <div>
       <h2>Profile</h2>
+      <div style={{ marginBottom: 12 }}>
+        <Avatar user={user} size={80} onChange={handleAvatarChange} />
+        {/* <div> */}
+          {/* <input 
+            type="file" 
+            accept="image/*" 
+            onChange={handleAvatarChange} 
+            disabled={avatarUploading}
+          /> */}
+          {avatarUploading && <span>Uploading...</span>}
+        {/* </div> */}
+      </div>
 
       <p><strong>Username:</strong> {user.username}</p>
       {/* <p><strong>Email:</strong> {user.email}</p> */}
@@ -104,7 +134,7 @@ const Profile = () => {
             placeholder="Location"
           />
 
-          <button onClick={handleSave}>Save</button>
+          <button onClick={handleSaveProfile}>Save</button>
           <button onClick={() => setEdit(false)}>Cancel</button>
         </>
       )}

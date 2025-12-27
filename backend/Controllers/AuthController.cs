@@ -48,6 +48,7 @@ namespace backend.Controllers
                 firstName = user.FirstName,
                 middleName = user.MiddleName,
                 surname = user.Surname,
+                avatarUrl = user.AvatarUrl,
                 role = user.Role.Name,
                 createdAt = user.CreatedAt
             });
