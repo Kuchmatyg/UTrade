@@ -65,7 +65,7 @@ useEffect(() => {
       <div style={{ minHeight: 200, border: '1px solid #ddd', padding: 8 }}>
         {messages.map(m => (
           <div key={m.id} style={{ marginBottom: 6 }}>
-            <div><strong>{m.senderUsername}</strong></div>
+            <div><strong>{m.senderName}</strong></div>
             <div>{m.content}</div>
             <div style={{ fontSize: 12, color: '#666' }}>
               {new Date(m.createdAt).toLocaleString()}

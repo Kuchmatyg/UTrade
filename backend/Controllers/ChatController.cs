@@ -72,7 +72,7 @@ namespace backend.Controllers
                 {
                     id = message.Id,
                     content = message.Content,
-                    senderUsername = message.SenderName,
+                    senderName = message.SenderName,
                     createdAt = message.CreatedAt
                 });
 
