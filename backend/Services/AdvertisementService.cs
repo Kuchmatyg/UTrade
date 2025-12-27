@@ -136,6 +136,29 @@ namespace backend.Services
             await context.SaveChangesAsync();
         }
 
+        // Отдавать объявления пользователя по статусу
+        public async Task<List<AdvertisementDto>> GetMyAdvertisementsAsync(int userId, AdvertisementStatus? status = null)
+        {
+            var query = context.Advertisements
+                .Include(a => a.Owner)
+                .Include(a => a.AdvertisementImages)
+                .Include(a => a.AdvertisementCategories)
+                    .ThenInclude(ac => ac.Category)
+                .Where(a => a.OwnerId == userId && !a.IsDeleted);
+
+            if (status != null)
+            {
+                query = query.Where(a => a.Status == status);
+            }
+
+            var ads = await query
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+            return ads.Select(MapToDto).ToList();
+        }
+
+
         // Завершение объявления и установка статуса Completed
         public async Task CompleteAdvertisementAsync(int adId, int currentUserId)
         {

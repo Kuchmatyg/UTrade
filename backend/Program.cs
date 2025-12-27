@@ -58,6 +58,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // �������
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AdvertisementService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<NotificationService>();

@@ -54,15 +54,19 @@ namespace backend.Services
             return await context.Messages
                 .Where(m => m.ChatId == chatId && m.IsDeleted != true)
                 .OrderBy(m => m.CreatedAt)
-                .Select(m => new MessageDto
-                {
-                    Id = m.Id,
-                    ChatId = m.ChatId,
-                    SenderId = m.SenderId,
-                    SenderName = m.Sender.Username,
-                    Content = m.Content,
-                    CreatedAt = m.CreatedAt
-                })
+                .Join(
+                    context.Users,
+                    m => m.SenderId,
+                    u => u.Id,
+                    (m, u) => new MessageDto
+                    {
+                        Id = m.Id,
+                        ChatId = m.ChatId,
+                        SenderId = m.SenderId,
+                        SenderName = u.Username,
+                        Content = m.Content,
+                        CreatedAt = m.CreatedAt
+                    })
                 .ToListAsync();
         }
 

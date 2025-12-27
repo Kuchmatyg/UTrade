@@ -43,6 +43,8 @@ namespace backend.Controllers
                 id = user.Id,
                 username = user.Username,
                 email = user.Email,
+                phone = user.Phone,
+                location = user.Location,
                 firstName = user.FirstName,
                 middleName = user.MiddleName,
                 surname = user.Surname,

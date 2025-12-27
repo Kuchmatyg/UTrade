@@ -38,6 +38,18 @@ namespace backend.Controllers
             return Ok(advertisements);
         }
 
+        // Получение объявления пользователя по статусу
+        [HttpGet("my")]
+        [Authorize]
+        public async Task<IActionResult> GetMyAdvertisements([FromQuery] AdvertisementStatus? status)
+        {
+            int userId = int.Parse(User.FindFirst("id")!.Value);
+
+            var ads = await service.GetMyAdvertisementsAsync(userId, status);
+            return Ok(ads);
+        }
+
+
         // Получение объявления по id
         [HttpGet("{adId}")]
         public async Task<IActionResult> GetAdvertisement(int adId)
