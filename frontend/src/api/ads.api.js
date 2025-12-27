@@ -58,3 +58,9 @@ export const rejectAd = async (adId, reason) => {
   const { data } = await api.post(`/api/Advertisement/${adId}/reject`, { Reason: reason });
   return data;
 };
+
+export const fetchMyAdvertisements = async (status) => {
+  const params = status ? { status } : {};
+  const { data } = await api.get('/api/Advertisement/my', { params });
+  return data;
+};
