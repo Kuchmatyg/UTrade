@@ -1,5 +1,5 @@
 ﻿using backend.DTO;
-using backend.Models;
+using backend.DTO;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,6 @@ namespace backend.Controllers
 {
     [ApiController]
     [Route("api/reviews")]
-    [Authorize]
     public class ReviewController : ControllerBase
     {
         private readonly ReviewService reviewService;
@@ -19,24 +18,34 @@ namespace backend.Controllers
             this.reviewService = reviewService;
         }
 
-        private int CurrentUserId =>
-            int.Parse(User.FindFirstValue("id")!);
-
         // POST /api/reviews
         [HttpPost]
-        public async Task<IActionResult> CreateReview(CreateReviewDto dto)
+        [Authorize]
+        public async Task<IActionResult> Create([FromBody] CreateReviewDto dto)
         {
-            await reviewService.CreateReviewAsync(dto, CurrentUserId);
-            return NoContent();
+            int authorId = int.Parse(User.FindFirst("id")!.Value);
+
+            await reviewService.CreateReviewAsync(dto, authorId);
+
+            return Ok();
         }
 
-        // GET /api/users/{id}/reviews
-        [HttpGet("/api/users/{id}/reviews")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetUserReviews(int id)
+        // GET /api/reviews/by-ad/{adId}
+        [HttpGet("by-ad/{adId}")]
+        public async Task<IActionResult> GetByAd(int adId)
         {
-            var reviews = await reviewService.GetUserReviewsAsync(id);
+            var reviews = await reviewService.GetReviewsByAdAsync(adId);
             return Ok(reviews);
+        }
+
+        // GET /api/reviews/has-reviewed/{adId}
+        [HttpGet("by-ad/{adId}/mine")]
+        [Authorize]
+        public async Task<IActionResult> HasReviewed(int adId)
+        {
+            int userId = int.Parse(User.FindFirst("id")!.Value);
+            var result = await reviewService.HasUserReviewedAdAsync(adId, userId);
+            return Ok(result);
         }
     }
 }

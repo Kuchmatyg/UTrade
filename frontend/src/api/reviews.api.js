@@ -1,14 +1,26 @@
 import api from './axios';
 
-// Get reviews for a user (owner) by user id
-export const fetchUserReviews = async (userId) => {
-  const { data } = await api.get(`/api/users/${userId}/reviews`);
+// отзывы по объявлению
+export const fetchReviewsByAd = async (adId) => {
+  const { data } = await api.get(`/api/reviews/by-ad/${adId}`);
   return data;
 };
 
-// Create review: body must match CreateReviewDto
-export const postReview = async (adId, payload) => {
-  const body = { ...payload, AdvertisementId: adId };
+// создать отзыв
+export const postReview = async (payload, adId) => {
+  const body = {
+    AdvertisementId: adId,
+    TargetUserId: payload.targetUserId,
+    Rating: payload.rating,
+    Comment: payload.comment
+  };
+
   const { data } = await api.post('/api/reviews', body);
   return data;
+};
+
+
+export const fetchHasReviewed = async (adId) => {
+  const { data } = await api.get(`/api/reviews/by-ad/${adId}/mine`);
+  return data; // true / false
 };

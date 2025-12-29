@@ -64,7 +64,28 @@ namespace backend.Services
 
             context.Reviews.Add(review);
             await context.SaveChangesAsync();
+
+            await RecalculateUserRatingAsync(advertisement.OwnerId);
         }
+
+        public async Task<List<ReviewDto>> GetReviewsByAdAsync(int adId)
+        {
+            return await context.Reviews
+                .Where(r => r.AdvertisementId == adId)
+                .OrderByDescending(r => r.CreatedAt)
+                .Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    AuthorId = r.AuthorId,
+                    AuthorName = r.Author.Username,
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    CreatedAt = r.CreatedAt
+                })
+                .ToListAsync();
+        }
+
+
 
         // Получить отзывы пользователя
         public async Task<List<ReviewDto>> GetUserReviewsAsync(int userId)
@@ -86,5 +107,44 @@ namespace backend.Services
                 })
                 .ToListAsync();
         }
+        private async Task RecalculateUserRatingAsync(int userId)
+        {
+            var reviews = await context.Reviews
+                .Where(r => r.TargetUserId == userId)
+                .ToListAsync();
+
+            int avg = System.Convert.ToInt32(reviews.Average(r => r.Rating));
+            var count = reviews.Count;
+
+            var rating = await context.UserRatings
+                .FirstOrDefaultAsync(r => r.UserId == userId);
+
+            if (rating == null)
+            {
+                rating = new UserRating
+                {
+                    UserId = userId,
+                    AverageRating = avg,
+                    TotalReviews = count
+                };
+                context.UserRatings.Add(rating);
+            }
+            else
+            {
+                rating.AverageRating = avg;
+                rating.TotalReviews = count;
+            }
+
+            await context.SaveChangesAsync();
+        }
+        public async Task<bool> HasUserReviewedAdAsync(int adId, int userId)
+        {
+            return await context.Reviews.AnyAsync(r =>
+                r.AdvertisementId == adId &&
+                r.AuthorId == userId
+            );
+        }
+
+
     }
 }
