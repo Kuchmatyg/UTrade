@@ -336,6 +336,7 @@ namespace backend.Services
                 Name = ad.Name,
                 Description = ad.Description,
                 Price = ad.Price,
+                OwnerId = ad.OwnerId,
                 Username = ad.Owner.Username,
                 Location = ad.Location,
                 ContactEmail = ad.ContactEmail,
