@@ -100,6 +100,7 @@ namespace backend.Services
         {
             var ad = await context.Advertisements
                 .Include(a => a.AdvertisementCategories)
+                .Include(a => a.AdvertisementImages)
                 .FirstOrDefaultAsync(a => a.Id == adId && !a.IsDeleted);
 
             if (ad == null)
@@ -107,6 +108,14 @@ namespace backend.Services
 
             if (ad.OwnerId != currentUserId)
                 throw new Exception("You are not the owner");
+
+            // Чтобы пользователь не менял бесконечно, пока объявление на модерации
+            if (ad.Status == AdvertisementStatus.Pending)
+                throw new Exception("Advertisement is under moderation");
+
+            // сохраняем старые значения
+            var oldName = ad.Name;
+            var oldDescription = ad.Description;
 
             // обновляем поля
             ad.Name = dto.Name;
@@ -131,6 +140,25 @@ namespace backend.Services
                         CreatedAt = DateTime.UtcNow
                     });
                 }
+            }
+
+            // Проверка критичных изменений
+            bool criticalChanged =
+                ad.Status == AdvertisementStatus.Approved &&
+                (
+                    oldName != dto.Name ||
+                    oldDescription != dto.Description
+                );
+
+            if (criticalChanged)
+            {
+                ad.Status = AdvertisementStatus.Pending;
+                ad.RejectionReason = null;
+
+                await notificationService.NotifyAsync(
+                    ad.OwnerId,
+                    $"Ваше объявление \"{ad.Name}\" отправлено на повторную модерацию"
+                );
             }
 
             await context.SaveChangesAsync();
@@ -299,10 +327,23 @@ namespace backend.Services
             var image = new AdvertisementImage
             {
                 AdvertisementId = adId,
-                FileName = fileName
+                FileName = fileName,
+                CreatedAt = DateTime.UtcNow
             };
 
             context.AdvertisementImages.Add(image);
+
+            if (advertisement.Status == AdvertisementStatus.Approved)
+            {
+                advertisement.Status = AdvertisementStatus.Pending;
+                advertisement.UpdatedAt = DateTime.UtcNow;
+
+                await notificationService.NotifyAsync(
+                    advertisement.OwnerId,
+                    $"Изменены изображения объявления \"{advertisement.Name}\". Оно отправлено на повторную модерацию"
+                );
+            }
+
             await context.SaveChangesAsync();
             return image;
         }

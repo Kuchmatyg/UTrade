@@ -9,7 +9,6 @@ namespace backend.DTO
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public int Price { get; set; }
-
         public int OwnerId { get; set; }
         public string Username { get; set; } = null!;
         public string Location { get; set; } = null!;
@@ -22,6 +21,5 @@ namespace backend.DTO
         public List<string> Categories { get; set; } = new();
         public double? SellerRating { get; set; }
         public int SellerReviewsCount { get; set; }
-
     }
 }

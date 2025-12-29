@@ -2,3 +2,56 @@
 .ad-details { max-width:900px; margin:1rem auto; display:flex; flex-direction:column; gap:0.5rem; }
 .ad-details .images { display:flex; gap:8px; margin-top:8px; }
 .ad-details .meta { color:#bbb; }
+
+/* Header с кнопкой владельца */
+.ad-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Кнопка ⋮ */
+  .dots-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  
+  /* Выпадающее меню владельца */
+  .owner-menu-wrapper {
+    position: relative;
+  }
+  
+  .owner-menu {
+    position: absolute;
+    right: 0;
+    top: 28px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    z-index: 20;
+    min-width: 160px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .owner-menu button {
+    width: 100%;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .owner-menu button:hover {
+    background: #f5f5f5;
+  }
+  
+  .owner-menu .danger {
+    color: #d32f2f;
+  }
+  

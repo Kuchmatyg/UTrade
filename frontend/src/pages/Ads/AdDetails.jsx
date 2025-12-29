@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchAd, approveAd, rejectAd } from '../../api/ads.api';
+import { fetchAd, approveAd, rejectAd, completeAd, deleteAd } from '../../api/ads.api';
 import api from '../../api/axios';
 import { startChat } from '../../api/chats.api';
 import { useContext } from 'react';
@@ -13,6 +13,7 @@ const AdDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const [showOwnerMenu, setShowOwnerMenu] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
   const [ad, setAd] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -69,7 +70,6 @@ const AdDetails = () => {
           await rejectAd(modal.adId, modal.reason || 'No reason');
           navigate('/moderator/ads'); 
         }
-//        await useEffect();
         close();
 
       } catch (e) {
@@ -78,22 +78,75 @@ const AdDetails = () => {
       }
     };
 
+    const handleCompleteBtn = async () => {
+    try {
+      await completeAd(ad.id)
+      navigate('/profile');
+    } catch {
+      alert('Не удалось завершить объявление');
+    }
+  };
+
+  const handleDeleteBtn = async () => {
+    if (!window.confirm('Удалить объявление?')) return;
+
+    try {
+      await deleteAd(ad.id)
+      navigate('/profile');
+    } catch {
+      alert('Не удалось удалить объявление');
+    }
+  };
 
 return (
   <div>
-    
-    <h2>{ad.name}</h2>
-      <h2>
-        Продавец: {ad.username}
-        {ad.sellerRating && (
-          <span>
-            ⭐ {ad.sellerRating.toFixed(1)} ({ad.sellerReviewsCount})
-          </span>
-        )}
-      </h2>
+    <div className="ad-header">
+      <h2>{ad.name}</h2>
+      {/* Меню действий владельца */}
+      {user && user.id === ad.ownerId && (
+        <div className="owner-menu-wrapper">
+          <button
+            className="dots-btn"
+            onClick={() => setShowOwnerMenu(v => !v)}
+          >
+            ⋮
+          </button>
 
+          {showOwnerMenu && (
+            <div className="owner-menu">
+              <button
+                onClick={handleCompleteBtn}
+              >
+                ✅ Завершить
+              </button>
+
+              <button
+                onClick={() => navigate(`/myads/edit/${ad.id}`)}
+              >
+                ✏️ Изменить
+              </button>
+
+              <button
+                className="danger"
+                onClick={handleDeleteBtn}
+              >
+                🗑 Удалить
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
     <p>{ad.description}</p>
     <p><strong>Price:</strong> {ad.price} ₽</p>
+    <p>
+      <strong>Продавец:</strong> {ad.username}
+      {ad.sellerRating && (
+        <span>
+          ⭐ {ad.sellerRating.toFixed(1)} ({ad.sellerReviewsCount})
+        </span>
+      )}
+    </p>
     <p><strong>Location:</strong> {ad.location}</p>
     <p><strong>Contact email:</strong> {ad.contactEmail}</p>
     {ad.contactPhoneNumber && (
