@@ -138,7 +138,7 @@ const EditAd = () => {
           {selectedCategories.map((catId, index) => (
             <div key={`${index}-${catId ?? 'empty'}`} style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
               <select value={catId ?? ''} onChange={e => handleCategoryChange(index, e.target.value)}>
-                <option value="">Select category</option>
+                <option value="">Выбрать категорию</option>
                 {getAvailableCategories(index).map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}

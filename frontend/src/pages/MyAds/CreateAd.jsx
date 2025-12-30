@@ -137,7 +137,7 @@ useEffect(() => {
       value={catId ?? ''}
       onChange={(e) => handleCategoryChange(index, e.target.value)}
     >
-      <option value="">Select category</option>
+      <option value="">Выбрать категорию</option>
       {getAvailableCategories(index).map(cat => (
         <option key={cat.id} value={cat.id}>
           {cat.name}
