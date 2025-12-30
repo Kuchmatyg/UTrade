@@ -9,6 +9,6 @@
         public string Location { get; set; } = null!;
         public string ContactEmail { get; set; } = null!;
         public string? ContactPhoneNumber { get; set; }
-        public List<int>? CategoryIds { get; set; }
+        public List<int> CategoryIds { get; set; }
     }
 }

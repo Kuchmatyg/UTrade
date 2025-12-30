@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
 import { fetchMyAdvertisements } from '../api/ads.api';
 import { updateProfile, uploadAvatar } from '../api/user.api';
-import { fetchReviewsByUser } from '../api/reviews.api';
 import AdCard from "../components/Ads/AdCard";
 import Avatar from '../components/avatar/Avatar';
 
@@ -16,7 +14,7 @@ const STATUSES = [
 ];
 
 
-const Profile = () => {
+const UserProfile = () => {
   const { user, updateUser, loading: authLoading } = useContext(AuthContext);
   const [status, setStatus] = useState(null);
   const [ads, setAds] = useState([]);
@@ -28,8 +26,6 @@ const Profile = () => {
   });
   const [adsLoading, setAdsLoading] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
-const [reviews, setReviews] = useState([]);
-const [reviewsLoading, setReviewsLoading] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -43,26 +39,19 @@ const [reviewsLoading, setReviewsLoading] = useState(false);
         setAdsLoading(false);
       }
     };
+
     loadAds();
   }, [status, user]);
 
   useEffect(() => {
     if (!user) return;
-
-    fetchReviewsByUser(user.id)
-      .then(setReviews)
-      .catch(console.error);
-
+  
     setForm({
       email: user.email || '',
       phone: user.phone || '',
       location: user.location || '',
     });
-}, [user]);
-
-
-
-
+  }, [user]);
 
   const handleSaveProfile = async () => {
     try {
@@ -114,11 +103,9 @@ const [reviewsLoading, setReviewsLoading] = useState(false);
       </div>
 
       <p><strong>Username:</strong> {user.username}</p>
-      <p><strong>ФИО:</strong> {user.firstName} {user.middleName} {user.surname}</p>
-
       {/* <p><strong>Email:</strong> {user.email}</p> */}
       <p><strong>Role:</strong> {user.role}</p>
-      <p><strong>Rating:</strong> ⭐{user.rating} на основе {user.reviewsCount} отзывов</p>
+
       {!edit ? (
         <>
           <p><strong>Email:</strong> {user.email}</p>
@@ -180,33 +167,6 @@ const [reviewsLoading, setReviewsLoading] = useState(false);
       {ads.map( (ad) => (
         <AdCard key={ad.id} ad={ad} />
       ))}
-
-      <h3>Отзывы</h3>
-
-      {reviewsLoading && <div>Загрузка отзывов...</div>}
-
-      {!reviewsLoading && reviews.length === 0 && (
-        <div>Отзывов пока нет</div>
-      )}
-
-      {reviews.map(r => (
-        <div key={r.id} style={{ borderBottom: '1px solid #ddd', marginBottom: 8 }}>
-          <strong>
-            {r.authorName} 
-          </strong>
-
-          <div>⭐ {r.rating}</div>
-
-          {r.comment && <p>{r.comment}</p>}
-          
-          <Link to={`/ads/${r.advertisementId}`}>
-            {r.advertisementName}
-          </Link>
-
-          <small>{new Date(r.createdAt).toLocaleDateString()}</small>
-        </div>
-))}
-
     </div>
   );
 };

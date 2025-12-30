@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { createAd, uploadAdImage } from '../../api/ads.api';
+import { createAd, uploadAdImage, fetchCategories } from '../../api/ads.api';
 import '../../styles/pages/CreateAd.css';
 
 const CreateAd = () => {
@@ -10,32 +11,38 @@ const CreateAd = () => {
   const [location, setLocation] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [categoryCsv, setCategoryCsv] = useState('');
+  const { user } = useContext(AuthContext);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([null]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      const categoryIds = categoryCsv
-        .split(',')
-        .map(s => s.trim())
-        .filter(Boolean)
-        .map(s => parseInt(s, 10));
+      const categoryIds = selectedCategories.filter(id => id && id !== -1);
 
-      const body = {
-        Name: name,
-        Description: description,
-        Price: Number(price) || 0,
-        Location: location,
-        ContactEmail: email,
-        ContactPhoneNumber: phone || null,
-        CategoryIds: categoryIds.length ? categoryIds : null,
+      if (categoryIds.length === 0) {
+        throw new Error('Выберите хотя бы одну категорию');
+      }
+
+      const body = {     
+          Name: name,
+          Description: description,
+          Price: Number(price),
+          Location: location,
+          ContactEmail: email,
+          ContactPhoneNumber: phone || null,
+          CategoryIds: selectedCategories.filter(id => id && id !== -1)
+      
       };
+
+
 
       const ad = await createAd(body);
 
@@ -58,6 +65,48 @@ const CreateAd = () => {
     }
   };
 
+  useEffect(() => {
+  (async () => {
+    try {
+      const data = await fetchCategories();
+      setCategories(data);
+    } catch (e) {
+      console.error('Failed to load categories', e);
+    }
+  })();
+}, []);
+
+useEffect(() => {
+  if (!user) return;
+
+  setEmail(user.email || '');
+  setPhone(user.phone || '');
+  setLocation(user.location || '');
+}, [user]);
+
+
+
+  
+  const handleCategoryChange = (index, value) => {
+    const updated = [...selectedCategories];
+    updated[index] = value ? Number(value) : null;
+
+    // если выбрали категорию в последнем селекте — добавляем новый
+    if (index === selectedCategories.length - 1 && value) {
+      updated.push(null);
+    }
+
+    setSelectedCategories(updated);
+  };
+
+    const getAvailableCategories = (index) => {
+      const used = selectedCategories
+        .filter((_, i) => i !== index)
+        .filter(Boolean);
+    return categories.filter(c => !used.includes(c.id));
+  };
+
+
   return (
     <div className="create-ad">
       <h2>Create Advertisement</h2>
@@ -66,9 +115,54 @@ const CreateAd = () => {
         <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
         <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} />
         <input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} required />
-        <input type="email" placeholder="Contact email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input
+          type="email"
+          placeholder="Contact email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+
+
         <input placeholder="Contact phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        <input placeholder="Category IDs (comma separated)" value={categoryCsv} onChange={(e) => setCategoryCsv(e.target.value)} />
+        <div className="categories">
+      <label>Categories</label>
+
+{selectedCategories.map((catId, index) => (
+  <div
+   key={`${index}-${catId ?? 'empty'}`}
+  // 👈 добавили key
+    style={{ display: 'flex', gap: 8 }}
+  >
+    <select
+      value={catId ?? ''}
+      onChange={(e) => handleCategoryChange(index, e.target.value)}
+    >
+      <option value="">Select category</option>
+      {getAvailableCategories(index).map(cat => (
+        <option key={cat.id} value={cat.id}>
+          {cat.name}
+        </option>
+      ))}
+    </select>
+
+    {selectedCategories.length > 1 && (
+      <button
+        type="button"
+        onClick={() =>
+          setSelectedCategories(prev =>
+            prev.filter((_, i) => i !== index)
+          )
+        }
+      >
+        ❌
+      </button>
+    )}
+  </div>
+))}
+
+
+        </div>
+
         <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
         <div>
           <button type="submit" disabled={loading}>{loading ? 'Creating...' : 'Create'}</button>

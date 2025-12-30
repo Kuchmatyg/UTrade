@@ -138,5 +138,12 @@ namespace backend.Controllers
             await service.RejectAdvertisementAsync(adId, dto.Reason);
             return Ok();
         }
+
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await service.GetCategoriesAsync();
+            return Ok(categories);
+        }
     }
 }

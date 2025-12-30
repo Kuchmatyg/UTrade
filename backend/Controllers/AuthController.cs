@@ -33,7 +33,9 @@ namespace backend.Controllers
             var user = await _context.Users
                 .AsNoTracking()
                 .Include(u => u.Role)
+                .Include(u => u.Rating) // 👈 ВАЖНО
                 .FirstOrDefaultAsync(u => u.Id == userId);
+
 
             if (user == null)
                 return NotFound();
@@ -45,13 +47,22 @@ namespace backend.Controllers
                 email = user.Email,
                 phone = user.Phone,
                 location = user.Location,
+
                 firstName = user.FirstName,
                 middleName = user.MiddleName,
                 surname = user.Surname,
+
                 avatarUrl = user.AvatarUrl,
                 role = user.Role.Name,
-                createdAt = user.CreatedAt
+                createdAt = user.CreatedAt,
+
+                rating = user.Rating != null
+                    ? user.Rating.AverageRating
+                    : 0,
+
+                reviewsCount = user.Rating?.TotalReviews ?? 0
             });
+
         }
 
         // -------------------- Логаут --------------------

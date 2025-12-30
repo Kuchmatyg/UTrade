@@ -97,7 +97,9 @@ namespace backend.Services
                 {
                     Id = r.Id,
                     AuthorId = r.AuthorId,
-                    AuthorName = r.Author.Username,
+                    AuthorName = r.Author != null
+                        ? r.Author.FirstName + " " + r.Author.Surname
+                        : "Аноним",
                     TargetUserId = r.TargetUserId,
                     AdvertisementId = r.AdvertisementId,
                     AdvertisementName = r.Advertisement.Name,
@@ -107,6 +109,7 @@ namespace backend.Services
                 })
                 .ToListAsync();
         }
+
         private async Task RecalculateUserRatingAsync(int userId)
         {
             var reviews = await context.Reviews

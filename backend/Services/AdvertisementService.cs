@@ -275,7 +275,7 @@ namespace backend.Services
             // Создаём уведомление пользователю
             string message = $"Ваше объявление \"{advertisement.Name}\" опубликовано";
             await notificationService.NotifyAsync(advertisement.OwnerId, message);
-           
+
             await context.SaveChangesAsync();
         }
 
@@ -371,6 +371,14 @@ namespace backend.Services
         private AdvertisementDto MapToDto(Advertisement ad)
         {
             //Categories = ad.AdvertisementCategories.Select(c => c.Category.Name).ToList()
+            var username = ad.Owner == null
+                 ? "Unknown user"
+                 : $"{ad.Owner.FirstName} {ad.Owner.Surname}" +
+                   (ad.Owner.Rating?.AverageRating != null
+                       ? $" ({ad.Owner.Rating.AverageRating:F1})"
+                       : "");
+
+
             return new AdvertisementDto
             {
                 Id = ad.Id,
@@ -378,18 +386,34 @@ namespace backend.Services
                 Description = ad.Description,
                 Price = ad.Price,
                 OwnerId = ad.OwnerId,
-                Username = ad.Owner.Username,
+                Username = username,
                 Location = ad.Location,
                 ContactEmail = ad.ContactEmail,
                 ContactPhoneNumber = ad.ContactPhoneNumber,
                 Status = ad.Status,
                 CreatedAt = ad.CreatedAt,
-                Images = ad.AdvertisementImages?.Select(i => i.Url).ToList() ?? new List<string>(),
+                Images = ad.AdvertisementImages?
+                    .Select(i => i.Url)
+                    .ToList() ?? new List<string>(),
                 Categories = ad.AdvertisementCategories?
                     .Where(ac => ac.Category != null)
                     .Select(ac => ac.Category!.Name)
                     .ToList() ?? new List<string>(),
             };
+
         }
+        public async Task<List<CategoryDto>> GetCategoriesAsync()
+        {
+            return await context.Categories
+                .OrderBy(c => c.Name)
+                .Select(c => new CategoryDto
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToListAsync();
+        }
+
+
     }
 }

@@ -47,5 +47,23 @@ namespace backend.Controllers
             var result = await reviewService.HasUserReviewedAdAsync(adId, userId);
             return Ok(result);
         }
+
+        [HttpGet("by-user/{userId}")]
+        public async Task<IActionResult> GetByUser(int userId)
+        {
+            var reviews = await reviewService.GetUserReviewsAsync(userId);
+            return Ok(reviews);
+        }
+
+        // GET /api/reviews/me
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetMyReviews()
+        {
+            int userId = int.Parse(User.FindFirst("id")!.Value);
+            var reviews = await reviewService.GetUserReviewsAsync(userId);
+            return Ok(reviews);
+        }
+
     }
 }

@@ -15,6 +15,11 @@ export const createAd = async (payload) => {
   return data;
 };
 
+export const fetchCategories = async () => {
+  const { data } = await api.get('/api/advertisement/categories');
+  return data;
+};
+
 export const uploadAdImage = async (adId, file) => {
   const form = new FormData();
   form.append('file', file);

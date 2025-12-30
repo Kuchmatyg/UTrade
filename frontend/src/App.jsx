@@ -31,6 +31,7 @@ function App() {
             <Route path="/myads/edit/:id" element={<ProtectedRoute><EditAd /></ProtectedRoute>} />
             <Route path="/moderator/ads" element={<ProtectedRoute><ModeratorAds /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
           </Routes>
         </Layout>

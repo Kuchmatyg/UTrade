@@ -18,6 +18,11 @@ export const postReview = async (payload, adId) => {
   const { data } = await api.post('/api/reviews', body);
   return data;
 };
+// отзывы по пользователю
+export const fetchReviewsByUser = async (userId) => {
+  const { data } = await api.get(`/api/reviews/by-user/${userId}`);
+  return data;
+};
 
 
 export const fetchHasReviewed = async (adId) => {

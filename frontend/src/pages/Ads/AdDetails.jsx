@@ -152,26 +152,33 @@ return (
     {ad.contactPhoneNumber && (
       <p><strong>Phone:</strong> {ad.contactPhoneNumber}</p>
     )}
-    <div style={{ margin: '8px 0' }}>
-      <button
-        disabled={contactLoading}
-        onClick={async () => {
-          if (!user) return navigate('/login');
-          try {
-            setContactLoading(true);
-            const chat = await startChat(ad.id);
-            navigate(`/chats/${chat.id}`);
-          } catch (err) {
-            console.error('startChat error', err);
-            alert('Не удалось создать чат');
-          } finally {
-            setContactLoading(false);
-          }
-        }}
-      >
-        {contactLoading ? 'Создаю чат...' : 'Написать продавцу'}
-      </button>
-    </div>
+    
+{user && user.id !== ad.ownerId && (
+  <div style={{ margin: '8px 0' }}>
+    <button
+      disabled={contactLoading}
+      onClick={async () => {
+        try {
+          setContactLoading(true);
+          const chat = await startChat(ad.id);
+          navigate(`/chats/${chat.id}`);
+        } catch (err) {
+          console.error('startChat error', err);
+          alert('Не удалось создать чат');
+        } finally {
+          setContactLoading(false);
+        }
+      }}
+    >
+      {contactLoading ? 'Создаю чат...' : 'Написать продавцу'}
+    </button>
+  </div>
+)}
+{!user && (
+  <button onClick={() => navigate('/login')}>
+    Войти, чтобы написать продавцу
+  </button>
+)}
 
     {ad.categories && ad.categories.length > 0 && (
       <p><strong>Categories:</strong> {ad.categories.join(', ')}</p>
