@@ -282,6 +282,7 @@ namespace backend.Services
             if (advertisement == null) throw new Exception("Advertisement not found");
 
             advertisement.Status = AdvertisementStatus.Approved;
+            advertisement.RejectionReason = null;
 
             // Создаём уведомление пользователю
             string message = $"Ваше объявление \"{advertisement.Name}\" опубликовано";
@@ -403,6 +404,7 @@ namespace backend.Services
                 ContactPhoneNumber = ad.ContactPhoneNumber,
                 Status = ad.Status,
                 CreatedAt = ad.CreatedAt,
+                RejectionReason = ad.RejectionReason,
                 Images = ad.AdvertisementImages?
                     .Select(i => i.Url)
                     .ToList() ?? new List<string>(),
