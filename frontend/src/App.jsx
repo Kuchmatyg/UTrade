@@ -4,7 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthContext'
 import ProtectedRoute from './auth/ProtectedRoute'
 import Layout from './components/layout/Layout'
-
+import UserProfilePage from './pages/UserProfilePage';
+import MyProfilePage from './pages/MyProfilePage'
 import Login from './pages/Login'
 import AdsList from './pages/Ads/AdsList'
 import AdDetails from './pages/Ads/AdDetails'
@@ -30,8 +31,8 @@ function App() {
             <Route path="/myads/create" element={<ProtectedRoute><CreateAd /></ProtectedRoute>} />
             <Route path="/myads/edit/:id" element={<ProtectedRoute><EditAd /></ProtectedRoute>} />
             <Route path="/moderator/ads" element={<ProtectedRoute><ModeratorAds /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            
+            <Route path="/profile" element={<ProtectedRoute><MyProfilePage /></ProtectedRoute>} />
+            <Route path="/users/:id" element={<ProtectedRoute><UserProfilePage /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
           </Routes>
         </Layout>

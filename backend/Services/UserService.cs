@@ -1,5 +1,6 @@
 ﻿using backend.AppDbContext;
 using backend.DTO;
+using backend.Models; // где лежит AdvertisementStatus
 using Microsoft.EntityFrameworkCore;
 
 public class UserService
@@ -25,6 +26,43 @@ public class UserService
         user.Location = dto.Location;
 
         await context.SaveChangesAsync();
+    }
+
+    // 🔹 Отзывы о пользователе
+    public async Task<UserProfileDto?> GetUserProfileAsync(int userId)
+    {
+        var user = await context.Users
+            .AsNoTracking()
+            .Include(u => u.Rating)
+            .Include(u => u.Advertisements)
+            .Include(u => u.TargetUsers)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+            return null;
+
+        return new UserProfileDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            AvatarUrl = user.AvatarUrl,
+            FirstName = user.FirstName,
+            MiddleName = user.MiddleName,
+            Surname = user.Surname,
+            Location = user.Location,
+            CreatedAt = user.CreatedAt,
+
+            Rating = user.Rating != null
+                ? user.Rating.AverageRating  : 0,
+
+            ReviewsCount = user.Rating?.TotalReviews ?? user.TargetUsers.Count,
+
+            ActiveAdsCount = user.Advertisements
+                .Count(a => a.Status == AdvertisementStatus.Approved),
+
+            CompletedAdsCount = user.Advertisements
+                .Count(a => a.Status == AdvertisementStatus.Completed)
+        };
     }
 
     // Сохраняем картинку на аватарку пользователя

@@ -9,6 +9,12 @@ export const fetchAd = async (id) => {
   const { data } = await api.get(`/api/Advertisement/${id}`);
   return data;
 };
+export const fetchAdsByUser = async (userId, status) => {
+  const { data } = await api.get(`/api/Advertisement/by-user/${userId}`, {
+    params: { status }
+  });
+  return data;
+};
 
 export const createAd = async (payload) => {
   const { data } = await api.post('/api/Advertisement', payload);

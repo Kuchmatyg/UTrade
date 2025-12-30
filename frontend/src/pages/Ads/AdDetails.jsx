@@ -8,6 +8,7 @@ import { fetchReviewsByAd, fetchHasReviewed, postReview } from '../../api/review
 
 import { AuthContext } from '../../auth/AuthContext';
 import '../../styles/pages/AdDetails.css';
+import { Link } from 'react-router-dom';
 
 const AdDetails = () => {
   const { id } = useParams();
@@ -140,7 +141,7 @@ return (
     <p>{ad.description}</p>
     <p><strong>Price:</strong> {ad.price} ₽</p>
     <p>
-      <strong>Продавец:</strong> {ad.username}
+      <strong>Продавец:</strong><Link to={`/users/${ad.ownerId}`}>{ad.username}</Link> 
       {ad.sellerRating && (
         <span>
           ⭐ {ad.sellerRating.toFixed(1)} ({ad.sellerReviewsCount})
