@@ -282,6 +282,7 @@ namespace backend.Services
             if (advertisement == null) throw new Exception("Advertisement not found");
 
             advertisement.Status = AdvertisementStatus.Approved;
+            advertisement.RejectionReason = null;
 
             // Создаём уведомление пользователю
             string message = $"Ваше объявление \"{advertisement.Name}\" опубликовано";
@@ -403,6 +404,7 @@ namespace backend.Services
                 ContactPhoneNumber = ad.ContactPhoneNumber,
                 Status = ad.Status,
                 CreatedAt = ad.CreatedAt,
+                RejectionReason = ad.RejectionReason,
                 Images = ad.AdvertisementImages?
                     .Select(i => i.Url)
                     .ToList() ?? new List<string>(),
@@ -424,6 +426,41 @@ namespace backend.Services
                 })
                 .ToListAsync();
         }
+
+        public async Task<List<AdvertisementDto>> SearchAdvertisementsAsync(string? query, int? categoryId, int? minPrice, int? maxPrice)
+        {
+            var adsQuery = context.Advertisements
+                .Include(a => a.Owner)
+                .Include(a => a.AdvertisementImages)
+                .Include(a => a.AdvertisementCategories)
+                    .ThenInclude(ac => ac.Category)
+                .Where(a => a.Status == AdvertisementStatus.Approved && !a.IsDeleted)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                adsQuery = adsQuery.Where(a => a.Name.Contains(query) || a.Description.Contains(query));
+            }
+
+            if (categoryId.HasValue)
+            {
+                adsQuery = adsQuery.Where(a => a.AdvertisementCategories.Any(ac => ac.CategoryId == categoryId.Value));
+            }
+
+            if (minPrice.HasValue)
+            {
+                adsQuery = adsQuery.Where(a => a.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                adsQuery = adsQuery.Where(a => a.Price <= maxPrice.Value);
+            }
+
+            var ads = await adsQuery.ToListAsync();
+            return ads.Select(MapToDto).ToList();
+        }
+
 
 
     }

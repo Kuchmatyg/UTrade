@@ -140,6 +140,12 @@ return (
     </div>
     <p>{ad.description}</p>
     <p><strong>Price:</strong> {ad.price} ₽</p>
+    {/* Причина отклонения */}
+    {ad.rejectionReason && (
+      <p style={{ color: 'red', marginTop: 8 }}>
+        <strong >Причина отклонения:</strong> {ad.rejectionReason}
+      </p>
+    )}
     <p>
       <strong>Продавец:</strong><Link to={`/users/${ad.ownerId}`}>{ad.username}</Link> 
       {ad.sellerRating && (

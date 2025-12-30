@@ -16,6 +16,7 @@ namespace backend.DTO
         public string? ContactPhoneNumber { get; set; }
         public AdvertisementStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? RejectionReason { get; set; }
 
         public List<string> Images { get; set; } = new();
         public List<string> Categories { get; set; } = new();
