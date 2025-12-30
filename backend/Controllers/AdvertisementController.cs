@@ -1,14 +1,16 @@
-﻿using backend.DTO;
+﻿using backend.AppDbContext;
+using backend.DTO;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/Advertisement")]
     public class AdvertisementController : ControllerBase
     {
         private readonly AdvertisementService service;
@@ -17,7 +19,6 @@ namespace backend.Controllers
         {
             this.service = service;
         }
-
         // -------------------- User Endpoints --------------------
 
         // Создание нового объявления
@@ -99,6 +100,16 @@ namespace backend.Controllers
             await service.ResubmitAdvertisementAsync(adId, userId);
             return Ok();
         }
+
+        [HttpGet("by-user/{userId}")]
+        public async Task<IActionResult> GetByUser(
+        int userId,
+        [FromQuery] AdvertisementStatus? status)
+        {
+            var ads = await service.GetByUserAsync(userId, status);
+            return Ok(ads);
+        }
+
 
         [HttpPost("{adId}/complete")]
         [Authorize]

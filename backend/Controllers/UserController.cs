@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/users")]
     public class UserController : ControllerBase
     {
         private readonly UserService service;
@@ -45,5 +45,15 @@ namespace backend.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProfile(int id)
+        {
+            var profile = await service.GetUserProfileAsync(id);
+
+            if (profile == null)
+                return NotFound();
+
+            return Ok(profile);
+        }
     }
 }

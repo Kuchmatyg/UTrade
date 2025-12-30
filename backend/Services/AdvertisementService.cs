@@ -17,7 +17,18 @@ namespace backend.Services
             this.env = env;
             this.notificationService = notificationService;
         }
+        public async Task<List<Advertisement>> GetByUserAsync(
+        int userId,
+        AdvertisementStatus? status)
+        {
+            var query = context.Advertisements
+                .Where(a => a.OwnerId == userId);
 
+            if (status.HasValue)
+                query = query.Where(a => a.Status == status.Value);
+
+            return await query.ToListAsync();
+        }
         // Создание нового объявления
         public async Task<AdvertisementDto> CreateAdvertisementAsync(CreateAdvertisementDto dto, int ownerId)
         {
