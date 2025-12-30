@@ -156,5 +156,13 @@ namespace backend.Controllers
             var categories = await service.GetCategoriesAsync();
             return Ok(categories);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchAdvertisements([FromQuery] string? query, [FromQuery] int? categoryId, [FromQuery] int? minPrice, [FromQuery] int? maxPrice)
+        {
+            var ads = await service.SearchAdvertisementsAsync(query, categoryId, minPrice, maxPrice);
+            return Ok(ads);
+        }
+
     }
 }
