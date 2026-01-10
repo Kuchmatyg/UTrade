@@ -5,10 +5,11 @@ import api from '../../api/axios';
 import { startChat } from '../../api/chats.api';
 import { useContext } from 'react';
 import { fetchReviewsByAd, fetchHasReviewed, postReview } from '../../api/reviews.api';
-
 import { AuthContext } from '../../auth/AuthContext';
 import '../../styles/pages/AdDetails.css';
 import { Link } from 'react-router-dom';
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const AdDetails = () => {
   const { id } = useParams();
@@ -29,6 +30,8 @@ const AdDetails = () => {
   const [comment, setComment] = useState('');
   const [reviewLoading, setReviewLoading] = useState(false);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -192,7 +195,7 @@ return (
     )}
     {ad.images && ad.images.length > 0 && (
       <div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {ad.images.map((u, i) => {
             const src = (u || '').startsWith('http')
               ? u
@@ -202,10 +205,25 @@ return (
                 key={i}
                 src={src}
                 alt={`img-${i}`}
-                style={{ width: 150, height: 100, objectFit: 'cover' }}
+                style={{ width: 150, height: 100, objectFit: 'cover', cursor: 'pointer' }}
+                onClick={() => {
+                  setPhotoIndex(i);
+                  setLightboxOpen(true);
+                }}
               />
             );
           })}
+
+          {lightboxOpen && (
+            <Lightbox
+              open={lightboxOpen}
+              index={photoIndex}
+              close={() => setLightboxOpen(false)}
+              slides={ad.images.map(u => ({
+                src: (u || '').startsWith('http') ? u : `${api.defaults.baseURL}${u}`
+              }))}
+            />
+          )}
         </div>
       </div>
     )}
