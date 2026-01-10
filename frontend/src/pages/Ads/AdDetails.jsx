@@ -5,10 +5,11 @@ import api from '../../api/axios';
 import { startChat } from '../../api/chats.api';
 import { useContext } from 'react';
 import { fetchReviewsByAd, fetchHasReviewed, postReview } from '../../api/reviews.api';
-
 import { AuthContext } from '../../auth/AuthContext';
 import '../../styles/pages/AdDetails.css';
 import { Link } from 'react-router-dom';
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const AdDetails = () => {
   const { id } = useParams();
@@ -29,6 +30,8 @@ const AdDetails = () => {
   const [comment, setComment] = useState('');
   const [reviewLoading, setReviewLoading] = useState(false);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -138,14 +141,14 @@ return (
         </div>
       )}
     </div>
-    <p>{ad.description}</p>
-    <p><strong>Price:</strong> {ad.price} ₽</p>
     {/* Причина отклонения */}
     {ad.rejectionReason && (
       <p style={{ color: 'red', marginTop: 8 }}>
         <strong >Причина отклонения:</strong> {ad.rejectionReason}
       </p>
     )}
+    <p><strong>Цена:</strong> {ad.price} ₽</p>
+    <p><strong>Описние:</strong>{ad.description}</p>
     <p>
       <strong>Продавец:</strong><Link to={`/users/${ad.ownerId}`}>{ad.username}</Link> 
       {ad.sellerRating && (
@@ -154,10 +157,10 @@ return (
         </span>
       )}
     </p>
-    <p><strong>Location:</strong> {ad.location}</p>
-    <p><strong>Contact email:</strong> {ad.contactEmail}</p>
+    <p><strong>Местоположение:</strong> {ad.location}</p>
+    <p><strong>Email:</strong> {ad.contactEmail}</p>
     {ad.contactPhoneNumber && (
-      <p><strong>Phone:</strong> {ad.contactPhoneNumber}</p>
+      <p><strong>Телефон:</strong> {ad.contactPhoneNumber}</p>
     )}
     
 {user && user.id !== ad.ownerId && (
@@ -188,12 +191,11 @@ return (
 )}
 
     {ad.categories && ad.categories.length > 0 && (
-      <p><strong>Categories:</strong> {ad.categories.join(', ')}</p>
+      <p><strong>Категории:</strong> {ad.categories.join(', ')}</p>
     )}
     {ad.images && ad.images.length > 0 && (
       <div>
-        <h4>Images</h4>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {ad.images.map((u, i) => {
             const src = (u || '').startsWith('http')
               ? u
@@ -203,10 +205,25 @@ return (
                 key={i}
                 src={src}
                 alt={`img-${i}`}
-                style={{ width: 150, height: 100, objectFit: 'cover' }}
+                style={{ width: 150, height: 100, objectFit: 'cover', cursor: 'pointer' }}
+                onClick={() => {
+                  setPhotoIndex(i);
+                  setLightboxOpen(true);
+                }}
               />
             );
           })}
+
+          {lightboxOpen && (
+            <Lightbox
+              open={lightboxOpen}
+              index={photoIndex}
+              close={() => setLightboxOpen(false)}
+              slides={ad.images.map(u => ({
+                src: (u || '').startsWith('http') ? u : `${api.defaults.baseURL}${u}`
+              }))}
+            />
+          )}
         </div>
       </div>
     )}

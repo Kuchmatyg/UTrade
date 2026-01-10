@@ -145,7 +145,7 @@ useEffect(() => {
       ))}
     </select>
 
-    {selectedCategories.length > 1 && (
+    {selectedCategories.length > 1 && catId !== null && (
       <button
         type="button"
         onClick={() =>
@@ -165,7 +165,10 @@ useEffect(() => {
 
         <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
         <div>
-          <button type="submit" disabled={loading}>{loading ? 'Creating...' : 'Create'}</button>
+          <button type="submit" disabled={loading}>{loading ? 'Создание...' : 'Создать'}</button>
+          <button type="button" onClick={() => navigate(-1)}>
+            Отмена
+          </button>
         </div>
         {error && <div style={{ color: 'red' }}>{String(error)}</div>}
       </form>

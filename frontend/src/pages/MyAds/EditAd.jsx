@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchAd, updateAd, uploadAdImage, fetchCategories } from '../../api/ads.api';
 import { AuthContext } from '../../auth/AuthContext';
@@ -24,11 +24,24 @@ const EditAd = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([null]);
 
+  const [initialAd, setInitialAd] = useState(null);
+
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
         const [ad, allCategories] = await Promise.all([fetchAd(id), fetchCategories()]);
+        setInitialAd({
+          name: ad.name,
+          description: ad.description ?? '',
+          price: ad.price,
+          location: ad.location,
+          email: ad.contactEmail,
+          phone: ad.contactPhoneNumber ?? '',
+          categoryIds: allCategories
+            .filter(c => ad.categories.includes(c.name))
+            .map(c => c.id)
+        });
         setName(ad.name);
         setDescription(ad.description ?? '');
         setPrice(ad.price);
@@ -36,6 +49,8 @@ const EditAd = () => {
         setEmail(ad.contactEmail);
         setPhone(ad.contactPhoneNumber ?? '');
         setCategories(allCategories);
+
+
 
         // Подставляем существующие категории
         if (ad.categories && ad.categories.length > 0) {
@@ -54,6 +69,32 @@ const EditAd = () => {
       }
     })();
   }, [id]);
+
+  const isChanged = useMemo(() => {
+    if (!initialAd) return false;
+    const currentCategoryIds = selectedCategories.filter(Boolean);
+    return (
+      name !== initialAd.name ||
+      description !== initialAd.description ||
+      Number(price) !== initialAd.price ||
+      location !== initialAd.location ||
+      email !== initialAd.email ||
+      phone !== initialAd.phone ||
+      file !== null ||
+      JSON.stringify(currentCategoryIds.sort()) !==
+        JSON.stringify(initialAd.categoryIds.sort())
+    );
+  }, [
+    name,
+    description,
+    price,
+    location,
+    email,
+    phone,
+    selectedCategories,
+    file,
+    initialAd
+  ]);
 
   const handleCategoryChange = (index, value) => {
     const updated = [...selectedCategories];
@@ -143,7 +184,7 @@ const EditAd = () => {
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
-              {selectedCategories.length > 1 && (
+              {selectedCategories.length > 1 && catId !== null && (
                 <button type="button" onClick={() => setSelectedCategories(prev => prev.filter((_, i) => i !== index))}>❌</button>
               )}
             </div>
@@ -152,8 +193,8 @@ const EditAd = () => {
 
         <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] ?? null)} />
         <div>
-          <button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
-          <button type="button" onClick={() => navigate(`/ads/${id}`)} style={{ marginLeft: 8 }}>Cancel</button>
+          <button type="submit" disabled={saving || !isChanged}>{saving ? 'Сохранение...' : 'Применить изменения'}</button>
+          <button type="button" onClick={() => navigate(`/ads/${id}`)} style={{ marginLeft: 8 }}>Отмена</button>
         </div>
         {error && <div style={{ color: 'red' }}>{String(error)}</div>}
       </form>
