@@ -143,7 +143,7 @@ const EditAd = () => {
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
-              {selectedCategories.length > 1 && (
+              {selectedCategories.length > 1 && catId !== null && (
                 <button type="button" onClick={() => setSelectedCategories(prev => prev.filter((_, i) => i !== index))}>❌</button>
               )}
             </div>
@@ -152,8 +152,8 @@ const EditAd = () => {
 
         <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] ?? null)} />
         <div>
-          <button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
-          <button type="button" onClick={() => navigate(`/ads/${id}`)} style={{ marginLeft: 8 }}>Cancel</button>
+          <button type="submit" disabled={saving}>{saving ? 'Сохранение...' : 'Применить изменения'}</button>
+          <button type="button" onClick={() => navigate(`/ads/${id}`)} style={{ marginLeft: 8 }}>Отмена</button>
         </div>
         {error && <div style={{ color: 'red' }}>{String(error)}</div>}
       </form>
