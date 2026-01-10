@@ -8,7 +8,7 @@ const getInitials = (user) => {
     return first + last;
 };
 
-const Avatar = ({ user, size = 80, onChange }) => {
+const Avatar = ({ user, size = 80, onChange, clickable = true }) => {
     const inputRef = useRef(null);
     const [hovered, setHovered] = useState(false);
 
@@ -38,11 +38,11 @@ const Avatar = ({ user, size = 80, onChange }) => {
             fontWeight: 'bold',
             position: 'relative',
             overflow: 'hidden',
-            cursor: 'pointer',
+            cursor: clickable ? 'pointer' : 'default',
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onClick={handleClick}
+        onClick={clickable ? handleClick : undefined}
     >
         {user.avatarUrl ? (
         <img
@@ -54,7 +54,7 @@ const Avatar = ({ user, size = 80, onChange }) => {
         getInitials(user)
         )}
 
-        {hovered && (
+        {hovered && clickable && (
         <div
             style={{
                 position: 'absolute',
@@ -77,6 +77,7 @@ const Avatar = ({ user, size = 80, onChange }) => {
         accept="image/*"
         style={{ display: 'none' }}
         onChange={onChange}
+        disabled={!clickable}
         />
     </div>
     );

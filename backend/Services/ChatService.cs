@@ -18,24 +18,49 @@ namespace backend.Services
         }
 
         // Получить список чатов пользователя
-        public async Task<List<ChatDto>> GetChatsForUserAsync(int userId)
+        public async Task<List<ChatListItemDto>> GetChatsForUserAsync(int userId)
         {
+
             return await context.Chats
                 .Include(c => c.Advertisement)
+                    .ThenInclude(a => a.AdvertisementImages)
                 .Include(c => c.UserFrom)
                 .Include(c => c.UserTo)
+                .Include(c => c.Messages)
                 .Where(c => c.UserFromId == userId || c.UserToId == userId)
-                .OrderByDescending(c => c.CreatedAt)
-                .Select(c => new ChatDto
+                .Select(c => new
                 {
-                    Id = c.Id,
-                    AdvertisementId = c.AdvertisementId,
-                    AdvertisementName = c.Advertisement.Name,
-                    UserFromId = c.UserFromId,
-                    UserFromName = c.UserFrom.Username,
-                    UserToId = c.UserToId,
-                    UserToName = c.UserTo.Username,
-                    CreatedAt = c.CreatedAt
+                    Chat = c,
+                    LastMessage = c.Messages
+                        .OrderByDescending(m => m.CreatedAt)
+                        .FirstOrDefault()
+                })
+                .OrderByDescending(x => x.LastMessage != null ? x.LastMessage.CreatedAt : x.Chat.CreatedAt)
+                .Select(x => new ChatListItemDto
+                {
+                    Id = x.Chat.Id,
+
+                    AdvertisementId = x.Chat.AdvertisementId,
+                    AdvertisementName = x.Chat.Advertisement.Name,
+                    AdvertisementImageUrl = x.Chat.Advertisement.AdvertisementImages
+                        .OrderBy(i => i.Id)
+                        .Select(i => i.FileName)
+                        .FirstOrDefault(),
+
+                    CompanionId = x.Chat.UserFromId == userId ? x.Chat.UserToId : x.Chat.UserFromId,
+                    CompanionFirstName = x.Chat.UserFromId == userId
+                        ? x.Chat.UserTo.FirstName
+                        : x.Chat.UserFrom.FirstName,
+                    CompanionSurname = x.Chat.UserFromId == userId
+                        ? x.Chat.UserTo.Surname
+                        : x.Chat.UserFrom.Surname,
+                    CompanionAvatarUrl = x.Chat.UserFromId == userId
+                        ? x.Chat.UserTo.AvatarUrl
+                        : x.Chat.UserFrom.AvatarUrl,
+
+                    LastMessageText = x.LastMessage != null ? x.LastMessage.Content : null,
+                    IsLastMessageMine = x.LastMessage != null && x.LastMessage.SenderId == userId,
+                    LastMessageAt = x.LastMessage != null ? x.LastMessage.CreatedAt : null
                 })
                 .ToListAsync();
         }
@@ -63,7 +88,7 @@ namespace backend.Services
                         Id = m.Id,
                         ChatId = m.ChatId,
                         SenderId = m.SenderId,
-                        SenderName = u.Username,
+                        SenderName = u.FirstName + " " + u.Surname,
                         Content = m.Content,
                         CreatedAt = m.CreatedAt
                     })
@@ -194,7 +219,7 @@ namespace backend.Services
             // для того, чтобы можно было в MessageDto установить SenderName. Нужно для проекции на UI
             var senderInfo = await context.Users
                 .Where(u => u.Id == senderId)
-                .Select(u => u.Username)
+                .Select(u => u.FirstName + " " + u.Surname)
                 .FirstAsync();
 
             MessageDto newMessage = new MessageDto
