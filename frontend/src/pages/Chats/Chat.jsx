@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchChatMessages, sendMessage } from '../../api/chats.api';
 import { connectChat } from '../../api/chat.socket';
@@ -8,6 +8,7 @@ const Chat = () => {
   const { id } = useParams();
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
+  const messagesEndRef = useRef(null);
 
 useEffect(() => {
   let connection;
@@ -59,29 +60,36 @@ useEffect(() => {
   };
 
   return (
-    <div>
-      <h2>Chat</h2>
+    <div className="chat-page">
 
-      <div style={{ minHeight: 200, border: '1px solid #ddd', padding: 8 }}>
+      {/* Сообщения */}
+      <div className="chat-messages">
         {messages.map(m => (
-          <div key={m.id} style={{ marginBottom: 6 }}>
-            <div><strong>{m.senderName}</strong></div>
-            <div>{m.content}</div>
-            <div style={{ fontSize: 12, color: '#666' }}>
-              {new Date(m.createdAt).toLocaleString()}
+          <div
+            key={m.id}
+            className={`chat-message ${m.isMine ? 'mine' : 'theirs'}`}
+          >
+            {!m.isMine && <div className="sender">{m.senderName}</div>}
+            <div className="bubble">{m.content}</div>
+            <div className="time">
+              {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
-      <div style={{ marginTop: 8 }}>
+      {/* Ввод */}
+      <div className="chat-input">
         <input
           value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Message"
+          onChange={e => setText(e.target.value)}
+          placeholder="Введите сообщение..."
+          onKeyDown={e => e.key === 'Enter' && handleSend()}
         />
-        <button onClick={handleSend}>Send</button>
+        <button onClick={handleSend}>Отправить</button>
       </div>
+
     </div>
   );
 };
