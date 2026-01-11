@@ -63,18 +63,16 @@ const AdsList = () => {
   };
 
   return (
-    <div>
-      <h2>Объявления</h2>
+    <div className="ads-page">
 
       {/* Фильтры */}
-      <div className="filters" style={{ marginBottom: 16 }}>
+      <div className="filters">
         <input
           type="text"
           name="query"
           placeholder="Поиск..."
           value={filters.query}
           onChange={handleFilterChange}
-          style={{ marginRight: 8 }}
         />
 
         <select name="categoryId" value={filters.categoryId} onChange={handleFilterChange} style={{ marginRight: 8 }}>
@@ -90,7 +88,6 @@ const AdsList = () => {
           placeholder="Мин. цена"
           value={filters.minPrice}
           onChange={handleFilterChange}
-          style={{ marginRight: 8 }}
         />
         <input
           type="number"
@@ -98,10 +95,9 @@ const AdsList = () => {
           placeholder="Макс. цена"
           value={filters.maxPrice}
           onChange={handleFilterChange}
-          style={{ marginRight: 8 }}
         />
 
-        <button onClick={handleApplyFilters}>Применить</button>
+        <button onClick={handleApplyFilters}>Поиск</button>
       </div>
 
       {/* Список объявлений */}
@@ -110,7 +106,6 @@ const AdsList = () => {
       ) : (
         <div 
           className="ads-grid"
-          // style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}
           >
             {ads.length === 0 ? (
               <p>Объявления не найдены</p>

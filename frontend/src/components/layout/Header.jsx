@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout as logoutApi } from '../../api/auth.api';
 import { AuthContext } from '../../auth/AuthContext';
+import '../../styles/components/Header.css'
 // import '../../assets/logo.jpg';
 
 const Header = () => {
@@ -30,7 +31,7 @@ const Header = () => {
 
   return (
     <header className="layout-header">
-      <nav>
+      <nav className="nav-container">
         <div className="nav-left">
           <Link to="/" className="nav-logo">
             <img src='/src/assets/logo2.png' alt="Home" height={36} />
