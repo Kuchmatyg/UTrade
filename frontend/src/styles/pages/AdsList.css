@@ -1,3 +1,10 @@
 /* Ads list page */
-.ads-list-header { display:flex; justify-content:space-between; align-items:center; }
-.ads-grid { margin-top:1rem; }
+/* .ads-list-header { display:flex; justify-content:space-between; align-items:center; }
+.ads-grid { margin-top:1rem; } */
+
+
+.ads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 50px;
+  }

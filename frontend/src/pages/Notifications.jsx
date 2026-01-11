@@ -30,11 +30,11 @@ const Notifications = () => {
     } catch (e) { console.error(e); }
   };
 
-  if (!notes.length) return <div>No notifications</div>;
+  if (!notes.length) return <div>Нет уведомлений</div>;
 
   return (
     <div>
-      <h2>Notifications</h2>
+      <h2>Уведомления</h2>
       <ul className="notifications">
   {notes.map(n => (
     <li

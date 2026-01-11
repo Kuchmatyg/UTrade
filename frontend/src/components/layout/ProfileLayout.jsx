@@ -41,15 +41,15 @@ const ProfileLayout = ({
 
       <p><b>Username:</b> {user.username}</p>
       <p><b>ФИО:</b> {user.firstName} {user.middleName} {user.surname}</p>
-      <p><b>Rating:</b> ⭐ {user.rating} ({user.reviewsCount} отзывов)</p>
+      <p><b>Рейтинг:</b> ⭐ {user.rating} ({user.reviewsCount} отзывов)</p>
 
       {/* ПРОСМОТР */}
       {isMyProfile && !edit && (
         <>
-          <p>Email: {user.email}</p>
-          <p>Phone: {user.phone || '-'}</p>
-          <p>Location: {user.location || '-'}</p>
-          <button onClick={onEditClick}>Edit profile</button>
+          <p><b>Email:</b> {user.email}</p>
+          <p><b>Телефон:</b> {user.phone || '-'}</p>
+          <p><b>Местоположение:</b> {user.location || '-'}</p>
+          <button onClick={onEditClick}>Редактировать профиль</button>
         </>
       )}
 
@@ -69,8 +69,8 @@ const ProfileLayout = ({
             onChange={e => onFormChange('location', e.target.value)}
           />
 
-          <button onClick={onSaveProfile}>Save</button>
-          <button onClick={onCancelEdit}>Cancel</button>
+          <button onClick={onSaveProfile}>Сохранить</button>
+          <button onClick={onCancelEdit}>Отмена</button>
         </>
       )}
       <p></p>

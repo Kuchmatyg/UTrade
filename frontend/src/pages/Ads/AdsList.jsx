@@ -108,12 +108,15 @@ const AdsList = () => {
       {loading ? (
         <div>Загрузка...</div>
       ) : (
-        <div className="ads-list" style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-          {ads.length === 0 ? (
-            <p>Объявления не найдены</p>
-          ) : (
-            ads.map(a => <AdCard key={a.id} ad={a} />)
-          )}
+        <div 
+          className="ads-grid"
+          // style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}
+          >
+            {ads.length === 0 ? (
+              <p>Объявления не найдены</p>
+            ) : (
+              ads.map(a => <AdCard key={a.id} ad={a} />)
+            )}
         </div>
       )}
     </div>
