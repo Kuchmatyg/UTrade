@@ -164,7 +164,7 @@ const EditAd = () => {
 
   return (
     <div className="create-ad">
-      <h2>Edit Advertisement</h2>
+      <h2>Редактирование объявления</h2>
       <form className="form" onSubmit={handleSubmit}>
         <input placeholder="Name" value={name} onChange={e => setName(e.target.value)} required />
         <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />

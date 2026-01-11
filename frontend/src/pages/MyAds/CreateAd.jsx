@@ -109,7 +109,7 @@ useEffect(() => {
 
   return (
     <div className="create-ad">
-      <h2>Create Advertisement</h2>
+      <h2>Создание объявления</h2>
       <form className="form" onSubmit={handleSubmit}>
         <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
         <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
@@ -130,7 +130,6 @@ useEffect(() => {
 {selectedCategories.map((catId, index) => (
   <div
    key={`${index}-${catId ?? 'empty'}`}
-  // 👈 добавили key
     style={{ display: 'flex', gap: 8 }}
   >
     <select
@@ -164,7 +163,7 @@ useEffect(() => {
         </div>
 
         <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-        <div>
+        <div className="form-buttons">
           <button type="submit" disabled={loading}>{loading ? 'Создание...' : 'Создать'}</button>
           <button type="button" onClick={() => navigate(-1)}>
             Отмена
