@@ -1,0 +1,126 @@
+.profile-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 80px; /* высота header */
+  }
+  
+  /* ===== HEADER ===== */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .profile-info h2 {
+    margin: 0;
+    font-size: 22px;
+  }
+  
+  .profile-info p {
+    margin: 4px 0;
+    color: #555;
+  }
+  
+  /* ===== CONTACTS ===== */
+  .profile-contacts p {
+    margin: 6px 0;
+  }
+  
+  /* ===== EDIT FORM ===== */
+  .profile-edit {
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .profile-edit input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    font-size: 14px;
+  }
+  
+  .edit-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  /* ===== BUTTONS ===== */
+  .primary-btn {
+    background: var(--sfu-blue);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .primary-btn:hover {
+    background: var(--sfu-blue-dark);
+  }
+  
+  .secondary-btn {
+    background: #eee;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .secondary-btn:hover {
+    background: #ddd;
+  }
+  
+  /* ===== STATUS TABS ===== */
+  .status-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .status-tabs button {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border-light);
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  
+  .status-tabs button.active {
+    background: var(--sfu-blue);
+    color: white;
+    border-color: var(--sfu-blue);
+  }
+  
+  /* ===== ADS GRID ===== */
+  .profile-ads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 50px;
+  }
+  
+  /* ===== REVIEWS ===== */
+  .reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .review-card {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    background: white;
+  }
+  
+  .review-card p {
+    margin: 6px 0 0;
+    color: #444;
+  }
+  
