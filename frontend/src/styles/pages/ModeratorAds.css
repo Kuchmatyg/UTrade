@@ -1,16 +1,177 @@
 /* Moderator ads */
-.moderator-ads { max-width: 1000px; margin:1rem auto; }
+/* .moderator-ads { max-width: 1000px; margin:1rem auto; }
 .moderator-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
 .moderator-item { display:flex; justify-content:space-between; align-items:center; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); }
 .moderator-item .title { font-weight:600; }
 .moderator-item .meta { font-size:0.9rem; color:#999; }
 .controls { display:flex; gap:8px; }
 .btn-approve { background: #2e7d32; color: white; padding:6px 10px; border-radius:6px; border:none; }
-.btn-reject { background: #b00020; color: white; padding:6px 10px; border-radius:6px; border:none; }
+.btn-reject { background: #b00020; color: white; padding:6px 10px; border-radius:6px; border:none; } */
 
 /* modal */
-.modal-backdrop { position:fixed; inset:0; background: rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:1200; }
+/* .modal-backdrop { position:fixed; inset:0; background: rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:1200; }
 .modal { background: #111; padding:16px; border-radius:8px; min-width:320px; max-width:600px; }
 .modal textarea { width:100%; min-height:100px; margin-top:8px; padding:8px; border-radius:6px; }
 .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:8px; }
-.modal button { padding:6px 10px; border-radius:6px; }
+.modal button { padding:6px 10px; border-radius:6px; } */
+
+/* Moderator ads page */
+.moderator-ads {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 96px 16px 32px; /* ⬅ отступ сверху от Header */
+  }
+
+  .moderator-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .moderator-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+  }
+  
+  .moderator-item:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+  
+  .moderator-item .title {
+    font-weight: 600;
+  }
+  
+  .moderator-item .title a {
+    text-decoration: none;
+    color: #2b2b2b;
+  }
+  
+  .moderator-item .title a:hover {
+    text-decoration: underline;
+  }
+  
+  .moderator-item .meta {
+    font-size: 13px;
+    color: #777;
+    margin-top: 2px;
+  }
+ 
+  .controls {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-approve {
+    background: #2e7d32;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .btn-approve:hover {
+    background: #256428;
+  }
+  
+  .btn-reject {
+    background: #c62828;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .btn-reject:hover {
+    background: #b71c1c;
+  }
+  
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35); /* мягче */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+  }
+
+  .modal {
+    background: #fff; /* ⬅ светлое */
+    padding: 20px 22px;
+    border-radius: 14px;
+    min-width: 320px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .modal h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+
+  .modal textarea {
+    width: 100%;
+    min-height: 90px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    font-size: 14px;
+  }
+  
+  .modal textarea:focus {
+    outline: none;
+    border-color: #4f7cff;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  
+  .modal-actions button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .modal-actions button:first-child {
+    background: #4f7cff;
+    color: white;
+  }
+  
+  .modal-actions button:first-child:hover {
+    background: #3f69e6;
+  }
+  
+  .modal-actions button:last-child {
+    background: #eee;
+  }
+  
+  .modal-actions button:last-child:hover {
+    background: #ddd;
+  }
+  
+  

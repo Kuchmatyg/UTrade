@@ -196,8 +196,8 @@ return (
 
         {showMenu && (
           <div>
-            <button onClick={() => openApprove(ad.id)}>✅ Accept</button>
-            <button onClick={() => openReject(ad.id)}>❌ Reject</button>
+            <button onClick={() => openApprove(ad.id)}>✅ Одобрить</button>
+            <button onClick={() => openReject(ad.id)}>❌ Забраковать</button>
           </div>
         )}
       </div>
@@ -205,12 +205,12 @@ return (
     {modal.open && (
         <div className="modal-backdrop">
           <div className="modal">
-            <h3>{modal.action === 'approve' ? 'Approve advertisement' : 'Reject advertisement'}</h3>
+            <h3>{modal.action === 'approve' ? 'Одобрить объявление' : 'Забраковать объявление'}</h3>
             {modal.action === 'reject' && (
-              <textarea placeholder="Reason for rejection" value={modal.reason} onChange={(e) => setModal(m => ({ ...m, reason: e.target.value }))} />
+              <textarea placeholder="Причина отмены объявления" value={modal.reason} onChange={(e) => setModal(m => ({ ...m, reason: e.target.value }))} />
             )}
             <div className="modal-actions">
-              <button onClick={submit}>{modal.action === 'approve' ? 'Confirm Approve' : 'Confirm Reject'}</button>
+              <button onClick={submit}>Подтвердить</button>
               <button onClick={close}>Cancel</button>
             </div>
           </div>
