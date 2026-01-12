@@ -29,14 +29,29 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input value={Username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-        <input type="password" value={Password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-        <button type="submit">Login</button>
-      </form>
-      {error && <div style={{ color: 'red' }}>{String(error)}</div>}
+    <div className="login-page">
+      <div className="login-wrapper">
+        <h2>Авторизация</h2>
+
+        <form className="login-form" onSubmit={handleSubmit}>
+          <input
+            value={Username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Логин"
+          />
+
+          <input
+            type="password"
+            value={Password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Пароль"
+          />
+
+          <button type="submit">Войти</button>
+        </form>
+
+        {error && <div className="login-error">{String(error)}</div>}
+      </div>
     </div>
   );
 };
