@@ -42,7 +42,7 @@ const ModeratorAds = () => {
 
   return (
     <div className="moderator-ads">
-      <h2>Pending Advertisements</h2>
+      <h2>Модерация</h2>
       {loading && <div>Loading...</div>}
       {!loading && ads.length === 0 && <div>No pending ads</div>}
       <ul className="moderator-list">
@@ -53,8 +53,8 @@ const ModeratorAds = () => {
               <div className="meta">by {a.username} — {a.createdAt}</div>
             </div>
             <div className="controls">
-              <button className="btn-approve" onClick={() => openApprove(a.id)}>Approve</button>
-              <button className="btn-reject" onClick={() => openReject(a.id)}>Reject</button>
+              <button className="btn-approve" onClick={() => openApprove(a.id)}>Одобрить</button>
+              <button className="btn-reject" onClick={() => openReject(a.id)}>Забраковать</button>
             </div>
           </li>
         ))}
@@ -63,13 +63,13 @@ const ModeratorAds = () => {
       {modal.open && (
         <div className="modal-backdrop">
           <div className="modal">
-            <h3>{modal.action === 'approve' ? 'Approve advertisement' : 'Reject advertisement'}</h3>
+            <h3>{modal.action === 'approve' ? 'Одобрить объявление' : 'Забраковать объявление'}</h3>
             {modal.action === 'reject' && (
-              <textarea placeholder="Reason for rejection" value={modal.reason} onChange={(e) => setModal(m => ({ ...m, reason: e.target.value }))} />
+              <textarea placeholder="Причина отмены объявления" value={modal.reason} onChange={(e) => setModal(m => ({ ...m, reason: e.target.value }))} />
             )}
             <div className="modal-actions">
-              <button onClick={submit}>{modal.action === 'approve' ? 'Confirm Approve' : 'Confirm Reject'}</button>
-              <button onClick={close}>Cancel</button>
+              <button onClick={submit}>Подтвердить</button>
+              <button onClick={close}>Отмена</button>
             </div>
           </div>
         </div>

@@ -109,28 +109,27 @@ useEffect(() => {
 
   return (
     <div className="create-ad">
-      <h2>Create Advertisement</h2>
+      <h2>Создание объявления</h2>
       <form className="form" onSubmit={handleSubmit}>
-        <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-        <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} />
-        <input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} required />
+        <input placeholder="Название" value={name} onChange={(e) => setName(e.target.value)} required />
+        <textarea placeholder="Описание" value={description} onChange={(e) => setDescription(e.target.value)} />
+        <input type="number" placeholder="Цена" value={price} onChange={(e) => setPrice(e.target.value)} />
+        <input placeholder="Локация" value={location} onChange={(e) => setLocation(e.target.value)} required />
         <input
           type="email"
-          placeholder="Contact email"
+          placeholder="Email"
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
 
 
-        <input placeholder="Contact phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        <input placeholder="Телефон" value={phone} onChange={(e) => setPhone(e.target.value)} />
         <div className="categories">
-      <label>Categories</label>
+      <label>Категории</label>
 
 {selectedCategories.map((catId, index) => (
   <div
    key={`${index}-${catId ?? 'empty'}`}
-  // 👈 добавили key
     style={{ display: 'flex', gap: 8 }}
   >
     <select
@@ -164,7 +163,7 @@ useEffect(() => {
         </div>
 
         <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-        <div>
+        <div className="form-buttons">
           <button type="submit" disabled={loading}>{loading ? 'Создание...' : 'Создать'}</button>
           <button type="button" onClick={() => navigate(-1)}>
             Отмена

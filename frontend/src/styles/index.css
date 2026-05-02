@@ -1,4 +1,4 @@
-:root {
+/* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -66,4 +66,16 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+} */
+
+
+:root {
+  --sfu-blue: #1f3c88;      /* основной */
+  --sfu-blue-dark: #162e66;
+  --sfu-red: #c62828;       /* акцент */
+  --bg-main: #f5f7fb;
+  --bg-card: #ffffff;
+  --border-light: #e2e6f0;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
 }

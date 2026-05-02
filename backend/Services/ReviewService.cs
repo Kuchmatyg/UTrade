@@ -77,7 +77,7 @@ namespace backend.Services
                 {
                     Id = r.Id,
                     AuthorId = r.AuthorId,
-                    AuthorName = r.Author.Username,
+                    AuthorName = r.Author.FirstName + " " + r.Author.Surname,
                     Rating = r.Rating,
                     Comment = r.Comment,
                     CreatedAt = r.CreatedAt

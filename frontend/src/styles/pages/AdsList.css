@@ -1,3 +1,67 @@
-/* Ads list page */
-.ads-list-header { display:flex; justify-content:space-between; align-items:center; }
-.ads-grid { margin-top:1rem; }
+  .ads-page {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;          
+    padding: 24px 32px;      
+    padding-top: 48px;       
+  }
+  
+  /* ===== FILTERS ===== */
+  
+  .filters {
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 24px;
+  
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Поисковая строка занимает всё свободное место */
+.filters input[name="query"] {
+    flex: 1;                 
+    min-width: 120px;        
+    padding: 8px 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  /* Остальные инпуты и select остаются компактными */
+  .filters input[type="number"],
+  .filters select {
+    width: 130px;
+    padding: 8px 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  .filters button {
+    margin-left: auto;
+    background: var(--sfu-blue);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .filters button:hover {
+    background: var(--sfu-blue-dark);
+  }
+  
+  /* ===== ADS GRID (FLEX) ===== */
+  
+  .ads-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 24px;
+
+    justify-content: center; /* центрируем все карточки */
+  }
+  
+  

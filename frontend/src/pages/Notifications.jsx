@@ -30,35 +30,35 @@ const Notifications = () => {
     } catch (e) { console.error(e); }
   };
 
-  if (!notes.length) return <div>No notifications</div>;
+  if (!notes.length) return <div>Нет уведомлений</div>;
 
   return (
-    <div>
-      <h2>Notifications</h2>
+    <div className='notifications-page'>
+      <h2>Уведомления</h2>
       <ul className="notifications">
-  {notes.map(n => (
-    <li
-      key={n.id}
-      className={`notification ${n.isRead ? 'read' : 'unread'}`}
-    >
-      <div className="dot" />
+        {notes.map(n => (
+          <li
+            key={n.id}
+            className={`notification ${n.isRead ? 'read' : 'unread'}`}
+          >
+            <div className="dot" />
 
-      <div className="body">
-        <div className="content">{n.content}</div>
-        <div className="date">
-          {new Date(n.createdAt).toLocaleString()}
-        </div>
-      </div>
+            <div className="body">
+              <div className="content">{n.content}</div>
+              <div className="date">
+                {new Date(n.createdAt).toLocaleString()}
+              </div>
+            </div>
 
-      <div className="actions">
-        {!n.isRead && (
-          <button onClick={() => handleRead(n.id)}>✓</button>
-        )}
-        <button onClick={() => handleDelete(n.id)}>🗑</button>
-      </div>
-    </li>
-  ))}
-</ul>
+            <div className="actions">
+              {!n.isRead && (
+                <button onClick={() => handleRead(n.id)}>✓</button>
+              )}
+              <button onClick={() => handleDelete(n.id)}>🗑</button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

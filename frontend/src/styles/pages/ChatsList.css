@@ -1,8 +1,6 @@
-/* Chats list */
-/* .chats-list { max-width:760px; margin:1rem auto; }
-.chats-list ul { padding:0; list-style:none; }
-.chats-list li { padding:0.5rem 0; border-bottom:1px solid rgba(255,255,255,0.03); } */
-
+.chats-list {
+  padding-top: 30px; 
+}
 
 .chats-ul {
     list-style: none;

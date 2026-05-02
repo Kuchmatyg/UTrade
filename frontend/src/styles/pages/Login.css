@@ -1,5 +1,78 @@
 /* Login page styles */
-.form { display:flex; flex-direction:column; gap:0.75rem; }
+/* .form { display:flex; flex-direction:column; gap:0.75rem; }
 .form input { width:100%; }
 .form button { align-self:flex-start; }
-.login-wrapper { max-width:480px; margin:2rem auto; padding:1rem; }
+.login-wrapper { max-width:480px; margin:2rem auto; padding:1rem; } */
+
+
+/* фон страницы */
+.login-page {
+    min-height: calc(100vh - 64px); /* чтобы не прилипало к хедеру */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+  
+  /* карточка */
+  .login-wrapper {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+  
+  /* заголовок */
+  .login-wrapper h2 {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* форма */
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  /* поля */
+  .login-form input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d0d7ff;
+    font-size: 14px;
+  }
+  
+  .login-form input:focus {
+    outline: none;
+    border-color: #4f7cff;
+    box-shadow: 0 0 0 2px rgba(79,124,255,0.15);
+  }
+  
+  /* кнопка */
+  .login-form button {
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #4f7cff;          /* цвет в стиле СФУ */
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  
+  .login-form button:hover {
+    background: #3f69e6;
+  }
+  
+  /* ошибка */
+  .login-error {
+    margin-top: 12px;
+    color: #c62828;
+    font-size: 14px;
+    text-align: center;
+  }
+  

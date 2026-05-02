@@ -17,7 +17,7 @@ const ChatsList = () => {
     })();
   }, []);
 
-  if (!chats.length) return <div>No chats</div>;
+  if (!chats.length) return <div>У вас пока нет чатов</div>;
 
   // return (
   //   <div>
@@ -34,7 +34,7 @@ const ChatsList = () => {
 
   return (
     <div className="chats-list">
-      <h2>Chats</h2>
+      <h2>Чаты</h2>
 
       <ul className="chats-ul">
         {chats.map(c => (

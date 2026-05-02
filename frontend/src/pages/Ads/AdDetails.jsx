@@ -103,130 +103,92 @@ const AdDetails = () => {
   };
 
 return (
-  <div>
-    <div className="ad-header">
-      <h2>{ad.name}</h2>
-      {/* Меню действий владельца */}
-      {user && user.id === ad.ownerId && (
-        <div className="owner-menu-wrapper">
-          <button
-            className="dots-btn"
-            onClick={() => setShowOwnerMenu(v => !v)}
-          >
-            ⋮
-          </button>
+  <div className="ad-details">
+    {/* Заголовок с названием и меню владельца */}
+  <div className="ad-header">
+    <h2>{ad.name}</h2>
+    {user && user.id === ad.ownerId && (
+      <div className="owner-menu-wrapper">
+        <button className="dots-btn" onClick={() => setShowOwnerMenu(v => !v)}>⋮</button>
 
-          {showOwnerMenu && (
-            <div className="owner-menu">
-              <button
-                onClick={handleCompleteBtn}
-              >
-                ✅ Завершить
-              </button>
-
-              <button
-                onClick={() => navigate(`/myads/edit/${ad.id}`)}
-              >
-                ✏️ Изменить
-              </button>
-
-              <button
-                className="danger"
-                onClick={handleDeleteBtn}
-              >
-                🗑 Удалить
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-    {/* Причина отклонения */}
-    {ad.rejectionReason && (
-      <p style={{ color: 'red', marginTop: 8 }}>
-        <strong >Причина отклонения:</strong> {ad.rejectionReason}
-      </p>
-    )}
-    <p><strong>Цена:</strong> {ad.price} ₽</p>
-    <p><strong>Описние:</strong>{ad.description}</p>
-    <p>
-      <strong>Продавец:</strong><Link to={`/users/${ad.ownerId}`}>{ad.username}</Link> 
-      {ad.sellerRating && (
-        <span>
-          ⭐ {ad.sellerRating.toFixed(1)} ({ad.sellerReviewsCount})
-        </span>
-      )}
-    </p>
-    <p><strong>Местоположение:</strong> {ad.location}</p>
-    <p><strong>Email:</strong> {ad.contactEmail}</p>
-    {ad.contactPhoneNumber && (
-      <p><strong>Телефон:</strong> {ad.contactPhoneNumber}</p>
-    )}
-    
-{user && user.id !== ad.ownerId && (
-  <div style={{ margin: '8px 0' }}>
-    <button
-      disabled={contactLoading}
-      onClick={async () => {
-        try {
-          setContactLoading(true);
-          const chat = await startChat(ad.id);
-          navigate(`/chats/${chat.id}`);
-        } catch (err) {
-          console.error('startChat error', err);
-          alert('Не удалось создать чат');
-        } finally {
-          setContactLoading(false);
-        }
-      }}
-    >
-      {contactLoading ? 'Создаю чат...' : 'Написать продавцу'}
-    </button>
-  </div>
-)}
-{!user && (
-  <button onClick={() => navigate('/login')}>
-    Войти, чтобы написать продавцу
-  </button>
-)}
-
-    {ad.categories && ad.categories.length > 0 && (
-      <p><strong>Категории:</strong> {ad.categories.join(', ')}</p>
-    )}
-    {ad.images && ad.images.length > 0 && (
-      <div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {ad.images.map((u, i) => {
-            const src = (u || '').startsWith('http')
-              ? u
-              : `${api.defaults.baseURL}${u}`;
-            return (
-              <img
-                key={i}
-                src={src}
-                alt={`img-${i}`}
-                style={{ width: 150, height: 100, objectFit: 'cover', cursor: 'pointer' }}
-                onClick={() => {
-                  setPhotoIndex(i);
-                  setLightboxOpen(true);
-                }}
-              />
-            );
-          })}
-
-          {lightboxOpen && (
-            <Lightbox
-              open={lightboxOpen}
-              index={photoIndex}
-              close={() => setLightboxOpen(false)}
-              slides={ad.images.map(u => ({
-                src: (u || '').startsWith('http') ? u : `${api.defaults.baseURL}${u}`
-              }))}
-            />
-          )}
-        </div>
+        {showOwnerMenu && (
+          <div className="owner-menu">
+            <button onClick={handleCompleteBtn}>✅ Завершить</button>
+            <button onClick={() => navigate(`/myads/edit/${ad.id}`)}>✏️ Изменить</button>
+            <button className="danger" onClick={handleDeleteBtn}>🗑 Удалить</button>
+          </div>
+        )}
       </div>
     )}
+  </div>
+
+  {/* Основной блок: фото слева, информация справа */}
+  <div className="ad-main">
+    {/* Левая колонка — фотографии */}
+    {ad.images?.length > 0 && (
+      <div className="ad-photos">
+        {ad.images.map((u, i) => {
+          const src = u.startsWith('http') ? u : `${api.defaults.baseURL}${u}`;
+          return (
+            <img
+              key={i}
+              src={src}
+              alt={`img-${i}`}
+              onClick={() => { setPhotoIndex(i); setLightboxOpen(true); }}
+            />
+          );
+        })}
+      </div>
+    )}
+
+    {/* Правая колонка — информация */}
+    <div className="ad-info">
+      {ad.rejectionReason && (
+        <p className="rejection-reason">
+          <strong>Причина отклонения:</strong> {ad.rejectionReason}
+        </p>
+      )}
+      <p><strong>Цена:</strong> {ad.price} ₽</p>
+      <p><strong>Описание:</strong> {ad.description}</p>
+      <p>
+        <strong>Продавец:</strong> <Link to={`/users/${ad.ownerId}`}>{ad.username}</Link>
+        {ad.sellerRating && <span> ⭐ {ad.sellerRating.toFixed(1)} ({ad.sellerReviewsCount})</span>}
+      </p>
+      <p><strong>Местоположение:</strong> {ad.location}</p>
+      <p><strong>Email:</strong> {ad.contactEmail}</p>
+      {ad.contactPhoneNumber && <p><strong>Телефон:</strong> {ad.contactPhoneNumber}</p>}
+      {ad.categories?.length > 0 && <p><strong>Категории:</strong> {ad.categories.join(', ')}</p>}
+
+      {/* Кнопка написать продавцу */}
+      {user && user.id !== ad.ownerId && (
+        <button
+          disabled={contactLoading}
+          onClick={async () => {
+            try {
+              setContactLoading(true);
+              const chat = await startChat(ad.id);
+              navigate(`/chats/${chat.id}`);
+            } finally { setContactLoading(false); }
+          }}
+        >
+          {contactLoading ? 'Создаю чат...' : 'Написать продавцу'}
+        </button>
+      )}
+
+      {!user && <button onClick={() => navigate('/login')}>Войти, чтобы написать продавцу</button>}
+
+    </div>
+  </div>
+
+  {/* Lightbox для фотографий */}
+  {lightboxOpen && (
+    <Lightbox
+      open={lightboxOpen}
+      index={photoIndex}
+      close={() => setLightboxOpen(false)}
+      slides={ad.images.map(u => ({ src: u.startsWith('http') ? u : `${api.defaults.baseURL}${u}` }))}
+    />
+  )}
 
     {user?.role === 'Moderator' && (
       <div>
@@ -234,8 +196,8 @@ return (
 
         {showMenu && (
           <div>
-            <button onClick={() => openApprove(ad.id)}>✅ Accept</button>
-            <button onClick={() => openReject(ad.id)}>❌ Reject</button>
+            <button onClick={() => openApprove(ad.id)}>✅ Одобрить</button>
+            <button onClick={() => openReject(ad.id)}>❌ Забраковать</button>
           </div>
         )}
       </div>
@@ -243,12 +205,12 @@ return (
     {modal.open && (
         <div className="modal-backdrop">
           <div className="modal">
-            <h3>{modal.action === 'approve' ? 'Approve advertisement' : 'Reject advertisement'}</h3>
+            <h3>{modal.action === 'approve' ? 'Одобрить объявление' : 'Забраковать объявление'}</h3>
             {modal.action === 'reject' && (
-              <textarea placeholder="Reason for rejection" value={modal.reason} onChange={(e) => setModal(m => ({ ...m, reason: e.target.value }))} />
+              <textarea placeholder="Причина отмены объявления" value={modal.reason} onChange={(e) => setModal(m => ({ ...m, reason: e.target.value }))} />
             )}
             <div className="modal-actions">
-              <button onClick={submit}>{modal.action === 'approve' ? 'Confirm Approve' : 'Confirm Reject'}</button>
+              <button onClick={submit}>Подтвердить</button>
               <button onClick={close}>Cancel</button>
             </div>
           </div>
@@ -314,7 +276,7 @@ return (
 
         {reviews.map(r => (
           <div key={r.id} style={{ borderBottom: '1px solid #ddd', padding: 8 }}>
-            <strong>{r.authorUsername}</strong>
+            <strong>{r.authorName}</strong>
             <div>Оценка: ⭐ {r.rating}</div>
             {r.comment && <p>{r.comment}</p>}
             <small>{new Date(r.createdAt).toLocaleDateString()}</small>
